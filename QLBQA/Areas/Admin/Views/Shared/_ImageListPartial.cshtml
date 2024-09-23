@@ -1,0 +1,10 @@
+﻿@model List<QLBQA.Models.Image> 
+
+@foreach (var image in Model)
+{
+    <div>
+        <img src="~/Content/images/@image.Path" alt="@image.Description" />
+
+    </div>
+}
+

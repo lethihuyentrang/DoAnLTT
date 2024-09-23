@@ -1,0 +1,253 @@
+﻿@model List<QLBQA.Models.CartItem>
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@using QLBQA.Models
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+<main class="main-content">
+    <div class="breadcrumb-area breadcrumb-height" data-bg-image="">
+        <div class="container h-100">
+            <div class="row h-100">
+                <div class="col-lg-12">
+                    <div class="breadcrumb-item">
+                        <h2 class="breadcrumb-heading">Giỏ hàng</h2>
+                        <ul>
+                            <li>
+                                <a href="@Url.Action("Index","Home")">Home <i class="pe-7s-angle-right"></i></a>
+                            </li>
+                            <li>Giỏ hàng</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="cart-area section-space-y-axis-100">
+        <div class="container">
+            <div class="row">
+                <div class="col-12">
+                    @if (Model != null && Model.Count > 0)
+                    {
+                        <form action="javascript:void(0)">
+                            <div class="table-content table-responsive">
+                                <table class="table">
+                                    <thead>
+                                        <tr>
+                                            <th class="product_remove">Xóa</th>
+                                            <th class="product-thumbnail">Thumb</th>
+                                            <th class="cart-product-name">Sản phẩm</th>
+                                            <th class="product-price">Đơn giá</th>
+                                            <th class="product_remove">Màu sắc</th>
+                                            <th class="product_remove">Kích cỡ</th>
+                                            <th class="product-quantity">Số lượng</th>
+                                            <th class="product-subtotal">Tổng tiền</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @if (Model != null && Model.Count > 0)
+                                        {
+                                            foreach (var item in Model)
+                                            {
+                                                <tr>
+                                                    <td class="product_remove">
+                                                        <a href="javascript:void(0);" onclick="openDeleteModal(@item.productDetail.ProductDetailID)">
+                                                            <i class="pe-7s-close" title="Remove"></i>
+                                                        </a>
+                                                    </td>
+                                                    <td class="product-thumbnail">
+                                                        <a product-detail-id="@item.productDetail.ProductDetailID" href="@Url.Action("Details","Product", new { id = item.productDetail.ProductID })">
+                                                            <img style="width:120px" src="~/Content/images/thumb_@item.productDetail.Product.Thumb" alt="Cart Thumbnail">
+                                                        </a>
+                                                    </td>
+
+
+                                                    <td class="product-name"><a class="get-product-id" href="@Url.Action("Details","Product", new { id = item.productDetail.ProductID })" product-id="@item.productDetail.Product.ProductID">@item.productDetail.Product.ProductName</a></td>
+                                                    @if (item.productDetail.Product.Discount > 0)
+                                                    {
+                                                        <td class="product-price"><span class="amount">@string.Format("{0:#,##0}", item.productDetail.Product.Discount) đ</span></td>
+                                                    }
+                                                    else
+                                                    {
+                                                        <td class="product-price"><span class="amount">@string.Format("{0:#,##0}", item.productDetail.Product.Price) đ</span></td>
+                                                    }
+                                                    <td class="product_remove">
+                                                        <div color-id="@item.productDetail.ColorID" style=" margin: auto; display: block; border-radius: 50%; width: 30px; height: 30px; background-color: @item.productDetail.Color.ColorCode"> </div>
+
+                                                    </td>
+                                                    <td class="product_remove">
+                                                        <p size-id="@item.productDetail.SizeID">@item.productDetail.Size.SizeName</p>
+                                                    </td>
+                                                    <td class="quantity">
+                                                        <div class="cart-plus-minus">
+                                                            <input class="cart-plus-minus-box" value="@item.amount" type="text">
+                                                        </div>
+                                                    </td>
+                                                    <td class="product-subtotal"><span class="amount">@string.Format("{0:#,##0}", item.TotalMoney()) đ</span></td>
+                                                </tr>
+                                            }
+                                        }
+                                        else
+                                        {
+
+
+                                        }
+
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div class="row">
+                                <div class="col-12">
+                                    <div class="coupon-all">
+
+                                        <div class="coupon2">
+                                            <input class="button" name="update_cart" value="Cập nhật" type="submit">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-5 ml-auto">
+                                    <div class="cart-page-total">
+                                        <h2>Tổng hóa đơn</h2>
+                                        <ul>
+                                            <li>Thành tiền <span>@string.Format("{0:#,##0}", Model.Sum(x => x.TotalMoney())) đ</span></li>
+                                            @*<li>Total <span>$118.60</span></li>*@
+                                        </ul>
+                                        <a id="checkout-btn" href="@Url.Action("CheckOut", "ShoppingCart")">Thanh toán</a>
+
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                    }
+                    else
+                    {
+                        <style>
+                            .row {
+                                text-align: center;
+                            }
+                        </style>
+                        <p>Giỏ hàng của bạn đang trống, <a href="@Url.Action("Index","Product")"> Shopping ngay!</a></p>
+                    }
+
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+<!-- Thêm mã HTML cho modal -->
+<div class="modal fade" id="confirmDeleteModal" tabindex="-1" role="dialog" aria-labelledby="confirmDeleteModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="confirmDeleteModalLabel">Xác nhận xóa sản phẩm</h5>
+                <button style=" border: none; background: white;" type="button" class="close" data-dismiss="modal" aria-label="Close" onclick="HideModal()">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                Bạn có chắc chắn muốn xóa sản phẩm này khỏi giỏ hàng không?
+            </div>
+            <div class="modal-footer">
+                <button id="DismissBtn" type="button" class="btn btn-secondary" data-dismiss="modal" onclick="HideModal()">Hủy</button>
+                <button type="button" class="btn btn-danger" id="confirmDeleteBtn">Xác nhận</button>
+            </div>
+        </div>
+    </div>
+</div>
+<style>
+    #DismissBtn {
+        -webkit-transition: all 0.3s ease 0s;
+        -o-transition: all 0.3s ease 0s;
+        transition: all 0.3s ease 0s;
+        border: none;
+    }
+
+        #DismissBtn:hover {
+            background: #bac34e;
+        }
+
+    .modal-body {
+        padding: 2rem 1rem;
+    }
+</style>
+<script>
+    // Mở modal khi nhấn nút xóa
+    function openDeleteModal(productDetailID) {
+        $('#confirmDeleteModal').modal('show');
+        $('#confirmDeleteBtn').click(function() {
+            deleteFromCart(productDetailID);
+            $('#confirmDeleteModal').modal('hide');
+        });
+    }
+
+    // Hàm xóa sản phẩm
+    function deleteFromCart(productDetailID) {
+        $.ajax({
+            url: '@Url.Action("Remove", "ShoppingCart")',
+            type: 'POST',
+            data: { ProductDetailID: productDetailID },
+            success: function(result) {
+                location.reload();
+            },
+            error: function() {
+                alert('Đã xảy ra lỗi trong quá trình xóa sản phẩm khỏi giỏ hàng.');
+            }
+        });
+    }
+
+
+    function HideModal() {
+        $('#confirmDeleteModal').modal('hide');
+    }
+</script>
+
+<script>
+    $(document).ready(function () {
+        $('form').submit(function (event) {
+            event.preventDefault();
+
+            var cartItems = [];
+            $('table tbody tr').each(function () {
+                var pDetail = {
+                    productDetailID: $(this).find('.product-thumbnail a').attr('product-detail-id'),
+                    productID: $(this).find('.get-product-id').attr('product-id'),
+                    colorID: $(this).find('.circle').attr('color-id'),
+                    sizeID: $(this).find('p').attr('size-id')
+
+                };
+
+                var cartItem = {
+                    productDetail: pDetail,
+                    amount: $(this).find('.quantity input').val()
+                };
+
+                cartItems.push(cartItem);
+            });
+
+            $.ajax({
+                url: '@Url.Action("UpdateCart", "ShoppingCart")',
+                type: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify({ cartItems: cartItems }),
+                success: function (response) {
+                    location.reload();
+                },
+                error: function (xhr, status, error) {
+                    location.reload();
+                }
+            });
+        });
+    });
+</script>
+<style>
+    .cart-page-total a:hover {
+        background-color: rgb(61 158 195) !important;
+        color: #fff;
+    }
+    .coupon-all .coupon input.button:hover, .coupon-all .coupon2 input.button:hover {
+        background-color: rgb(61 158 195) !important;
+    }
+</style>

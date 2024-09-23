@@ -1,0 +1,122 @@
+﻿@model PagedList.IPagedList<QLBQA.Models.Product>
+@using PagedList.Mvc;
+<link href="~/Content/PagedList.css" rel="stylesheet" type="text/css" />
+
+@*@{
+        var Colors = ViewBag.Colors;
+
+    }*@
+
+<div class="tab-pane fade show active" id="grid-view" role="tabpanel" aria-labelledby="grid-view-tab">
+    <div class="product-grid-view row">
+        @foreach (var item in Model)
+        {
+            <div class="col-lg-4 col-sm-6">
+                <div class="product-item">
+                    <div class="product-img img-zoom-effect">
+                        <a href="@Url.Action("Details", new {id= item.ProductID })">
+                            <img class="img-full" src="~/Content/images/thumb_@item.Thumb" alt="Product Images">
+                        </a>
+
+                    </div>
+                    <div class="product-content">
+                        <a class="product-name clamp-2" href="@Url.Action("Details", new {id= item.ProductID })">@item.ProductName</a>
+                        <div class="price-box pb-1">
+                            @if (item.Discount > 0)
+                            {
+
+                            <span style="color: black; font-size:medium" class="new-price"><del>@string.Format("{0:#,##0}", item.Price) đ</del> @string.Format("{0:#,##0}", item.Discount) đ</span>
+
+                            }
+                            else
+                            {
+                        <span style="color: black; font-size:medium" class="new-price">@string.Format("{0:#,##0}", item.Price)đ</span>
+                            }
+                        </div>
+
+                        @*@foreach (var color in Colors)
+                            {
+                                <div class="circle" style=" background-color: @color.ColorCode;"></div>
+
+                            }*@
+
+
+                    </div>
+                </div>
+            </div>
+        }
+
+
+    </div>
+</div>
+<div class="tab-pane fade" id="list-view" role="tabpanel" aria-labelledby="list-view-tab">
+    <div class="product-list-view row">
+        @foreach (var item in Model)
+        {
+            <div class="col-12">
+                <div class="product-item">
+                    <div class="product-img img-zoom-effect">
+                        <a href="@Url.Action("Details", new {id= item.ProductID })">
+                            <img class="img-full" src="~/Content/images/thumb_@item.Thumb" alt="Product Images">
+                        </a>
+ 
+                    </div>
+                    <div class="product-content align-self-center">
+                        <a class="product-name pb-2" href="@Url.Action("Details", new {id= item.ProductID })">@item.ProductName</a>
+                        <div class="price-box pb-1">
+                            @if (item.Discount > 0)
+                            {
+
+                            <span style="color: black; font-size:medium" class="new-price"><del>@string.Format("{0:#,##0}", item.Price) đ</del> @string.Format("{0:#,##0}", item.Discount) đ</span>
+
+                            }
+                            else
+                            {
+                        <span style="color: black; font-size:medium" class="new-price">@string.Format("{0:#,##0}", item.Price) đ</span>
+                            }
+                        </div>
+                        @*@foreach (var color in Colors)
+                            {
+                                <div class="circle" style=" background-color: @color.ColorCode;"></div>
+
+                            }*@
+                        <p class="short-desc mb-0">@item.Description</p>
+                    </div>
+                </div>
+            </div>
+        }
+
+    </div>
+</div>
+
+<div id="pages">
+    @Html.PagedListPager(Model,page => Url.Action("FilterProduct", "Product", new {filters = ViewBag.Filter, page = page }),
+        new PagedListRenderOptions
+            {
+                DisplayLinkToFirstPage = PagedListDisplayMode.Always, // Hiển thị liên kết đến trang đầu tiên
+            DisplayLinkToLastPage = PagedListDisplayMode.Always, // Hiển thị liên kết đến trang cuối cùng
+            MaximumPageNumbersToDisplay = 5, // Số lượng trang tối đa để hiển thị
+            EllipsesFormat = "&#8230;", // Định dạng dấu ...
+            LinkToPreviousPageFormat = "<",
+            LinkToNextPageFormat = ">",
+            LinkToFirstPageFormat = "<<", // Định dạng liên kết đến trang đầu tiên
+            LinkToLastPageFormat = ">>", // Định dạng liên kết đến trang cuối cùng
+        })
+</div>
+<style>
+    .pagination .active a {
+        background-color: rgb(186, 195, 78) !important;
+    }
+
+    #pages {
+        display: flex;
+        justify-content: center;
+    }
+
+        #pages ul li a {
+            padding: 16px 20px;
+        }
+        del{
+            color:darkred!important;
+        }
+</style>

@@ -1,0 +1,184 @@
+﻿@model QLBQA.Models.Customer
+<!-- Toastr CSS -->
+<link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" rel="stylesheet" />
+
+<!-- Toastr JS -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+@using QLBQA.Models
+@{
+    ViewBag.Title = "Dashboard";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    var Orders = ViewBag.Orders;
+    var OrderDetails = ViewBag.OrderDetails;
+    var customer = ViewBag.Customer;
+    QLBQA.Models.AccountEdit accountEdit = new QLBQA.Models.AccountEdit();
+    accountEdit = ViewBag.accountEdit;
+}
+@*@if (TempData["LoginMsgFail"] != null)
+{
+    <div class="alert alert-danger" role="alert">
+        @TempData["LoginMsgFail"]
+    </div>
+}
+
+@if (TempData["RegisterMsgFail"] != null)
+{
+    <div class="alert alert-danger" role="alert">
+        @TempData["RegisterMsgFail"]
+    </div>
+}
+@if (TempData["LoginMsgSuccess"] != null)
+{
+    <div class="alert alert-success" role="alert">
+        @TempData["LoginMsgSuccess"]
+    </div>
+}
+
+@if (TempData["RegisterMsgSuccess"] != null)
+{
+    <div class="alert alert-success" role="alert">
+        @TempData["RegisterMsgSuccess"]
+    </div>
+}
+@if (TempData["LogoutSuccess"] != null)
+{
+    <div class="alert alert-success" role="alert">
+        @TempData["LogoutSuccess"]
+    </div>
+}*@
+
+<main class="main-content">
+
+    <div class="account-page-area section-space-y-axis-100">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-3">
+                    <ul class="nav myaccount-tab-trigger" id="account-page-tab" role="tablist">
+                        <li class="nav-item">
+                            <a class="nav-link active" id="account-dashboard-tab" data-bs-toggle="tab" href="#account-dashboard" role="tab" aria-controls="account-dashboard" aria-selected="true">Dashboard</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" id="account-orders-tab" data-bs-toggle="tab" href="#account-orders" role="tab" aria-controls="account-orders" aria-selected="false">Đơn hàng</a>
+                        </li>
+                        @*<li class="nav-item">
+                            <a class="nav-link" id="account-address-tab" data-bs-toggle="tab" href="#account-address" role="tab" aria-controls="account-address" aria-selected="false">Địa chỉ</a>
+                        </li>*@
+                        <li class="nav-item">
+                            <a class="nav-link" id="account-details-tab" data-bs-toggle="tab" href="#account-details" role="tab" aria-controls="account-details" aria-selected="false">Tài khoản của tôi</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" id="account-logout-tab" href="@Url.Action("Logout","Accounts")" role="tab" aria-selected="false">Đăng xuất</a>
+                        </li>
+                    </ul>
+                </div>
+                <div class="col-lg-9">
+                    <div class="tab-content myaccount-tab-content" id="account-page-tab-content">
+                        <div class="tab-pane fade show active" id="account-dashboard" role="tabpanel" aria-labelledby="account-dashboard-tab">
+                            <div class="myaccount-dashboard">
+                                <p>
+                                    Xin chào <b>@Model.FullName</b> (<a href="@Url.Action("Logout","Accounts")">
+                                        Đăng xuất
+                                    </a>)
+                                </p>
+                                <p>
+                                    Bạn có thể theo dõi, quản lý đơn đặt hàng, địa chỉ giao hàng, <a href="javascript:void(0)">Quản lý tài khoản và đổi mật khẩu</a>.
+                                </p>
+                            </div>
+                        </div>
+                        <div class="tab-pane fade" id="account-orders" role="tabpanel" aria-labelledby="account-orders-tab">
+                            <div class="myaccount-orders">
+                                <h4 class="small-title">MY ORDERS</h4>
+                                <div class="table-responsive">
+                                    <table class="table table-bordered table-hover">
+                                        @if (Orders != null)
+                                        {
+                                            <tr>
+                                                <th>MÃ ĐƠN HÀNG</th>
+                                                <th>NGÀY TẠO</th>
+                                                <th>TRẠNG THÁI</th>
+                                                <th>TỔNG TIỀN</th>
+                                                <th></th>
+                                            </tr>
+                                            foreach (var item in Orders)
+                                            {
+                                                <tr>
+                                                    <td><a class="account-order-id" href="javascript:void(0)">#@item.OrderID</a></td>
+                                                    <td>@item.OrderDate</td>
+                                                    <td>@item.TransactStatus.Status</td>
+                                                    @*@{ 
+                                                        var Sum = 0;
+
+                                                        foreach(var oDetail in OrderDetails)
+                                                        {
+                                                            if(oDetail.OrderID == item.OrderID)
+                                                            {
+                                                                Sum += oDetail.Total;
+                                                            }
+                                                        }
+                                                    }*@
+                                                    <td>@string.Format("{0:#,##0}", item.Total)  đ</td>
+                                                    <td>
+                                                        <a href="@Url.Action("ViewOrder","Accounts",new {orderid = item.OrderID })" class="btn btn-secondary btn-primary-hover"><span>Xem</span></a>
+                                                    </td>
+                                                </tr>
+                                            }
+                                        }
+                                        else
+                                        {
+                                            <tr>Bạn chưa có đơn hàng nào, <a href="@Url.Action("Index","Product")"> Shopping ngay!</a></tr>
+                                        }
+
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                        @*<div class="tab-pane fade" id="account-address" role="tabpanel" aria-labelledby="account-address-tab">
+                            <div class="myaccount-address">
+                                <p>The following addresses will be used on the checkout page by default.</p>
+                                <div class="row">
+                                    <div class="col">
+                                        <h4 class="small-title">BILLING ADDRESS</h4>
+                                        <address>
+                                            1234 Heaven Stress, Beverly Hill OldYork UnitedState of Lorem
+                                        </address>
+                                    </div>
+                                    <div class="col">
+                                        <h4 class="small-title">SHIPPING ADDRESS</h4>
+                                        <address>
+                                            1234 Heaven Stress, Beverly Hill OldYork UnitedState of Lorem
+                                        </address>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>*@
+                    <div class="tab-pane fade" id="account-details" role="tabpanel" aria-labelledby="account-details-tab">
+                        <div class="myaccount-details">
+                            @Html.Partial("_AccountEditPartialView", accountEdit)
+
+                        </div>
+
+                    </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+<script>
+
+</script>
+<style>
+    .myaccount-tab-trigger li a.active {
+        background: rgb(61 158 195) !important;
+        border-color: rgb(61 158 195) !important;
+
+    }
+    .myaccount-tab-trigger li a:hover {
+        color: rgb(61 158 195) !important;
+    }
+    .btn-primary-hover:hover {
+        background-color: rgb(61 158 195) !important;
+        border-color: rgb(61 158 195) !important;
+        color: #fff;
+    }
+</style>

@@ -1,0 +1,44 @@
+﻿@model QLBQA.Models.Image
+
+@{
+    ViewBag.Title = "Xóa hình ảnh";
+    Layout = "~/Areas/Admin/Views/Shared/_AdminLayout.cshtml";
+}
+
+
+
+<h3>Bạn có chắc muốn xóa hình ảnh này?</h3>
+<div>
+
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+
+        </dt>
+
+        <dd>
+            <img style="width : 200px" src="~/Content/images/@Model.Path" alt="@Model.Description" />
+        </dd>
+        <dd>
+            @Html.DisplayFor(model => model.Product.ProductName)
+        </dd>
+
+        <dt>
+
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Description)
+        </dd>
+        @Html.HiddenFor(model => model.Product.ProductID)
+    </dl>
+
+    @using (Html.BeginForm()) {
+        @Html.AntiForgeryToken()
+
+<div class="form-actions no-color">
+    <input class="btn btn-primary m-r-5" type="submit" value="Xóa" />
+    <a class="btn btn-danger m-r-5" href="@Url.Action("CancelDelete", "Images", new { id = Model.ImageID })" title="Back">Hủy</a>
+</div>
+    }
+</div>

@@ -1,0 +1,123 @@
+﻿@model QLBQA.Models.Post
+
+@{
+    ViewBag.Title = "Details";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@{ 
+    var hotNewsList = ViewBag.hotNews;
+}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@Model.Title</title>
+    <style>
+        /* CSS styling for the news article */
+        .news-article {
+            position: relative;
+            top: -366px;
+            background-color: #f9f9f9;
+            padding: 20px;
+            margin-bottom: 20px;
+            margin-left: 200px; /* margin bên trái */
+            margin-right: 400px; /* margin bên phải */
+            max-width: 1000px; /* giới hạn chiều rộng của .news-article */
+            margin: 0 auto; /* căn giữa .news-article theo chiều ngang */
+        }
+
+            .news-article h1 {
+                color: #333;
+                font-size: 28px;
+                margin-bottom: 10px;
+            }
+
+            .news-article .sub-content {
+                color: #666;
+                font-size: 16px;
+                margin-bottom: 20px;
+            }
+
+            .news-article .main-content {
+                color: #333;
+                font-size: 18px;
+                line-height: 1.6;
+            }
+
+        /* CSS styling for the sidebar */
+        .sidebar {
+            position: sticky;
+            top: 60px;
+            right: 50px; /* Adjust the value as needed */
+            width: 250px; /* Adjust the width as needed */
+            background-color: #f2f2f2;
+            padding: 20px;
+            border-left: 1px solid #ddd;
+        }
+
+            .sidebar h2 {
+                font-size: 20px;
+                margin-bottom: 10px;
+            }
+
+            .sidebar ul {
+                list-style-type: none;
+                padding: 0;
+                margin: 0;
+            }
+
+            .sidebar li {
+                margin-bottom: 10px;
+            }
+
+                .sidebar li a {
+                    text-decoration: none;
+                    color: #333;
+                    font-size: 16px;
+                }
+        .breadcrumb-height {
+            height: 260px;
+        }
+    </style>
+</head>
+<body>
+    <div style="height:100px"></div>
+    @Html.Partial("_HotNewsPartialView")
+
+    <div class="news-article">
+        <h1>@Model.Title</h1>
+        <p class="sub-content">@Model.SContents</p>
+        <div class="main-content">
+            @Html.Raw(Model.Contents)
+        </div>
+    </div>
+
+    <div style="height:100px"></div>
+
+
+</body>
+</html>
+<style>
+    /* Thêm một lớp CSS mới cho sidebar khi nó biến mất */
+    .sidebar.hidden {
+        opacity: 0; /* Đặt opacity thành 0 khi biến mất */
+        transition: opacity 0.3s ease-in-out; /* Thêm hiệu ứng mượt mà */
+    }
+</style>
+<script>
+    window.onscroll = function () { scrollFunction() };
+
+    function scrollFunction() {
+        var sidebar = document.querySelector('.sidebar');
+        if (document.body.scrollHeight - window.innerHeight <= window.scrollY + 1000) {
+            sidebar.style.position = 'static';
+            sidebar.classList.remove('sticky'); // Loại bỏ lớp CSS khi cuộn xuống cuối trang
+            sidebar.classList.add('hidden'); // Thêm lớp CSS khi cuộn xuống cuối trang
+        } else {
+            sidebar.style.position = 'sticky';
+            sidebar.classList.remove('hidden'); // Loại bỏ lớp CSS khi không cuộn xuống cuối trang
+            sidebar.classList.add('sticky'); // Thêm lớp CSS khi không cuộn xuống cuối trang
+        }
+    }
+</script>

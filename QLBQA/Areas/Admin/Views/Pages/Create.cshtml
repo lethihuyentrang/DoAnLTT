@@ -1,0 +1,220 @@
+﻿<!DOCTYPE html>
+@model QLBQA.Models.Page
+
+@{
+    ViewBag.Title = "Create";
+    Layout = "~/Areas/Admin/Views/Shared/_AdminLayout.cshtml";
+}
+
+
+<html>
+@section Styles{
+
+    <link href="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote.min.css" rel="stylesheet">
+    <!-- Core css -->
+    <link href="~/assets/Admin_assets/css/app.min.css" rel="stylesheet">
+    <style>
+        .note-editor {
+            background: white;
+        }
+    </style>
+}
+
+@using (Html.BeginForm("Create", "Pages", FormMethod.Post, new { enctype = "multipart/form-data", id = "PageCreate" }))
+{
+    @Html.AntiForgeryToken()
+
+    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+    <div class="page-header no-gutters has-tab">
+        <div class="d-md-flex m-b-15 align-items-center justify-content-between">
+            <div class="media align-items-center m-b-15">
+
+                <div class="m-l-15">
+                    <h4 class="m-b-0">Thêm page</h4>
+                </div>
+            </div>
+
+        </div>
+        <ul class="nav nav-tabs">
+            <li class="nav-item">
+                <a class="nav-link active" data-toggle="tab" href="#product-edit-basic">Thông tin cơ bản</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" data-toggle="tab" href="#product-edit-description">Mô tả</a>
+            </li>
+        </ul>
+    </div>
+    <div class="tab-content m-t-15">
+        <div class="tab-pane fade show active" id="product-edit-basic">
+            <div class="card">
+                <div class="card-body">
+                    <div class="form-group">
+                        <p class="control-label col-md-2">Tên Page</p>
+                        <div class="col-md-11">
+                            @Html.EditorFor(model => model.PageName, new { htmlAttributes = new { @class = "form-control" } })
+                            @Html.ValidationMessageFor(model => model.PageName, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <p class="control-label col-md-2">Title</p>
+                        <div class="col-md-11">
+                            @Html.EditorFor(model => model.Title, new { htmlAttributes = new { @class = "form-control" } })
+                            @Html.ValidationMessageFor(model => model.Title, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+                    <div class="row">
+
+                        <div class="form-group col-6">
+                            <p class="control-label col-md-2">Thumb</p>
+                            <div class="col-md-10">
+                                <img id="output" class="img-rounded" alt="thumb" width="100" src="~/Content/images/no-image.jpg" />
+                                <p><label for="ufile" style="cursor:pointer; font-weight:bold">Chọn file ảnh</label></p>
+                                <input name="ImageFile" id="ufile" type="file" style="display:none;" onchange="loadfile(event)" />
+                            </div>
+                        </div>
+                        <div class="form-group col-6">
+                            <p class="control-label col-md-2">Alias</p>
+                            <div class="col-md-10">
+                                @Html.EditorFor(model => model.Alias, new { htmlAttributes = new { @class = "form-control" } })
+                                @Html.ValidationMessageFor(model => model.Alias, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="form-group col-6">
+                            <p class="control-label col-md-2">Ordering</p>
+                            <div class="col-md-10">
+                                @Html.EditorFor(model => model.Ordering, new { htmlAttributes = new { @class = "form-control" } })
+                                @Html.ValidationMessageFor(model => model.Ordering, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+                        <div class="form-group col-6">
+                            <p class="control-label col-md-2">Ngày tạo</p>
+                            <div class="col-md-10">
+                                @Html.TextBoxFor(model => model.CreateDate, new { @class = "form-control", type = "datetime-local", id = "dateCreated" })
+                                @Html.ValidationMessageFor(model => model.CreateDate, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+
+
+                    </div>
+                    <div class="form-group">
+                        <p class="control-label col-md-2">Published</p>
+                        <div class=" col-md-10">
+                            @Html.CheckBoxFor(model => model.Published)
+                            @Html.ValidationMessageFor(model => model.Published, "", new { @class = "text-danger" })
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        @*<div class="tab-pane fade" id="product-edit-option">
+                <div class="card">
+                    <div>
+                        @{Html.RenderPartial("_AddColorPartialView");}
+                    </div>
+
+
+                </div>
+            </div>*@
+
+        <div class="tab-pane fade" id="product-edit-description">
+            <div class="card">
+                <div class="card-body">
+                    <textarea id="summernote"></textarea>
+                    @Html.HiddenFor(model => model.Contents, new { @class = "form-control", id = "HiddenContent" })
+
+
+                </div>
+            </div>
+        </div>
+
+
+        @*<div class="tab-pane fade" id="product-edit-description">
+
+                <div class="card">
+
+                    <div class="card-body">
+
+                        <textarea class="summernote"></textarea>
+                        @Html.TextAreaFor(model => model.Contents, new { @class = "summernote" })
+
+
+                    </div>
+                </div>
+            </div>*@
+    </div>
+
+
+
+    <div class="form-group">
+        <div class="col-md-offset-2 col-md-10">
+            <input class="btn btn-success m-r-5" type="submit" value="Thêm" />
+            <a class="btn btn-danger m-r-5" href="@Url.Action("Index", "Pages")" title="Back">Hủy</a>
+        </div>
+    </div>
+}
+
+
+
+<script>
+    var loadfile = function (event) {
+        var image = document.getElementById('output');
+        image.src = URL.createObjectURL(event.target.files[0]);
+    };
+    document.addEventListener("DOMContentLoaded", function () {
+        // Lấy ngày và giờ hiện tại
+        var now = new Date();
+        var year = now.getFullYear();
+        var month = (now.getMonth() + 1).toString().padStart(2, '0');
+        var day = now.getDate().toString().padStart(2, '0');
+        var hours = now.getHours().toString().padStart(2, '0');
+        var minutes = now.getMinutes().toString().padStart(2, '0');
+
+        // Định dạng lại chuỗi ngày và giờ hiện tại
+        var formattedDate = `${year}-${month}-${day}T${hours}:${minutes}`;
+
+        // Đặt giá trị mặc định cho trường DateCreated
+        document.getElementById("dateCreated").value = formattedDate;
+    });
+
+
+
+</script>
+
+
+@section Scripts {
+
+    <script src="~/assets/Admin_assets/js/pages/e-commerce-product-edit.js"></script>
+
+    <!-- Core JS -->
+    <script src="~/assets/Admin_assets/js/app.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote.min.js"></script>
+    <script>
+        jQuery(document).ready(function () {
+            $('#summernote').summernote({
+                fontNames: ['Arial', 'Arial Black', 'Comic Sans MS', 'Courier New'],
+                styleTags: ['p', 'h1', 'h2', 'h3', 'h4', 'h5'],
+                height: 200,
+                minHeight: null,
+                maxHeight: null,
+                focus: true
+            });
+        });
+
+    </script>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            var form = document.getElementById("PageCreate");
+
+            form.addEventListener("submit", function (event) {
+                var content = $('#summernote').summernote('code');
+                document.getElementById("HiddenContent").value = content;
+            });
+        });
+    </script>
+}
+</html>

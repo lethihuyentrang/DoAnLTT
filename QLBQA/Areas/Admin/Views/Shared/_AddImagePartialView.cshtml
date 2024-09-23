@@ -1,0 +1,126 @@
+﻿@*@model QLBQA.Models.Image
+
+    @{
+        ViewBag.Title = "Create";
+        Layout = "~/Areas/Admin/Views/Shared/_AdminLayout.cshtml";
+    }
+
+    @using (Html.BeginForm())
+    {
+        @Html.AntiForgeryToken()
+
+        <div class="form-horizontal">
+            <hr />
+            @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+            <div class="form-group">
+                @Html.LabelFor(model => model.Path, htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    @Html.EditorFor(model => model.Path, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.Path, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(model => model.Description, htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    @Html.EditorFor(model => model.Description, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.Description, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(model => model.ProductID, "ProductID", htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    @Html.DropDownList("ProductID", null, htmlAttributes: new { @class = "form-control" })
+                    @Html.ValidationMessageFor(model => model.ProductID, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="form-group">
+                System.InvalidOperationException: 'There is no ViewData item of type 'IEnumerable<SelectListItem>
+                    ' that has the key 'ProductID'.'
+
+                    <div class="col-md-offset-2 col-md-10">
+                        <input type="submit" value="Create" class="btn btn-default" />
+                    </div>
+            </div>
+        </div>
+    }
+
+    <div>
+        @Html.ActionLink("Back to List", "Index")
+    </div>*@
+
+
+
+@model QLBQA.Models.Image
+
+@using (Html.BeginForm("AddImage", "Images", FormMethod.Post, new { id = "productForm", enctype = "multipart/form-data" }))
+{
+    @Html.AntiForgeryToken()
+
+    <div class="form-horizontal">
+        <h4>Add Image</h4>
+        <hr />
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+        <!-- Input fields for image -->
+        <div class="form-group">
+            <input type="hidden" id="productId" name="ProductID" />
+            <input type="file" id="ImageFiles" name="ImageFiles" multiple />
+        </div>
+
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-10">
+                <input id="submitBtn" type="submit" value="Add Image" class="btn btn-default" />
+            </div>
+        </div>
+    </div>
+}
+<script>
+     $(document).ready(function() {
+    $('#submitBtn').click(function(e) {
+        e.preventDefault();
+        var formData = new FormData($('#productForm')[0]);
+
+        // Gửi dữ liệu sản phẩm lên server
+        $.ajax({
+            url: '@Url.Action("Create", "Products")',
+            type: 'POST',
+            data: formData,
+            processData: false,
+            contentType: false,
+            success: function(response) {
+                // Lấy ID sản phẩm từ phản hồi của server
+                var productId = response.productId;
+
+                var imageFiles = $('#ImageFiles')[0].files;
+                var imageData = new FormData();
+
+                // Thêm các hình ảnh vào FormData
+                for (var i = 0; i < imageFiles.length; i++) {
+                    imageData.append('ImageFiles', imageFiles[i]);
+                }
+
+                // Gửi dữ liệu hình ảnh lên server
+                $.ajax({
+                    url: '@Url.Action("Create", "Products")',
+                    type: 'POST',
+                    data: imageData,
+                    processData: false,
+                    contentType: false,
+                    success: function() {
+                        // Chuyển hướng hoặc hiển thị thông báo thành công
+                        window.location.href = '@Url.Action("Index", "Products")';
+                    },
+                    error: function() {
+                        // Xử lý lỗi khi không thể lưu hình ảnh
+                    }
+                });
+            },
+            error: function() {
+                // Xử lý lỗi khi không thể lưu sản phẩm
+            }
+        });
+    });
+});
+</script>

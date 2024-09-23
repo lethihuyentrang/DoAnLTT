@@ -1,0 +1,82 @@
+﻿@model IEnumerable<QLBQA.Models.Role>
+
+@{
+    ViewBag.Title = "Quản lý quyền truy cập";
+    Layout = "~/Areas/Admin/Views/Shared/_AdminLayout.cshtml";
+}
+<div class="page-header">
+<div class="header-sub-title">
+    <nav class="breadcrumb breadcrumb-dash">
+        <a href="@Url.Action("Index", "Home", new { area = "Admin" })" class="breadcrumb-item"><i class="anticon anticon-home m-r-5"></i>Home</a>
+        <span class="breadcrumb-item active">Quản lý hệ thống</span>
+        <span class="breadcrumb-item active">Quản lý quyền truy cập</span>
+    </nav>
+</div>
+</div>
+<p>
+
+    <a class="btn btn-secondary btn-tone m-r-5" href="@Url.Action("Create", "Roles")" title="Create">Thêm mới</a>
+
+</p>
+
+@* Thông bao lỗi *@
+@if (TempData["ErrMsg"] != null)
+{
+    ViewBag.ErrMsg = TempData["ErrMsg"].ToString();
+    TempData["ErrMsg"] = null;
+    <div id="alertMessage" class="alert alert-danger" role="alert">
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+        <i class="anticon anticon-warning"></i>
+        @ViewBag.ErrMsg
+    </div>
+}
+<style>
+    #alertMessage {
+        transition: opacity 1s ease-in-out;
+    }
+</style>
+<script>
+    var disappearingDiv = document.getElementById("alertMessage");
+    function makeDisappear() {
+        disappearingDiv.style.opacity = 0;
+    }
+    setTimeout(makeDisappear, 5000);
+</script>
+@* End thông báo lỗi *@
+<div class="table-responsive">
+    <table class="table">
+        <thead>
+            <tr>
+                <th scope="col">ID</th>
+                <th scope="col">Tên quyền</th>
+                <th scope="col">Mô tả</th>
+                <th scope="col">#</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (Model != null)
+            {
+                foreach (var item in Model)
+                {
+                    <tr>
+                        <th scope="row">@item.RoleID</th>
+                        <td>@item.RoleName</td>
+                        <td>@item.Description</td>
+                        <td>
+                            <a class="btn btn-primary btn-tone m-r-5" href="@Url.Action("Details", "Roles", new { id = item.RoleID })" title="Details">Chi tiết</a>
+                            <a class="btn btn-warning btn-tone m-r-5" href="@Url.Action("Edit", "Roles", new { id = item.RoleID })" title="Edit">Sửa</a>
+                            <a class="btn btn-danger btn-tone m-r-5" href="@Url.Action("Delete", "Roles", new { id = item.RoleID })" title="Delete">Xóa</a>
+
+
+                        </td>
+                    </tr>
+                }
+            }
+
+        </tbody>
+    </table>
+</div>
+
+

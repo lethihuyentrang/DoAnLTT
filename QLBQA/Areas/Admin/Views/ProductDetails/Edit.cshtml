@@ -1,0 +1,117 @@
+﻿@model List<QLBQA.Models.ProductDetail>
+
+@{
+    ViewBag.Title = "Nhập số lượng";
+    Layout = "~/Areas/Admin/Views/Shared/_AdminLayout.cshtml";
+}
+
+<h2>Nhập số lượng</h2>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+
+@using (Html.BeginForm("Edit", "ProductDetails", FormMethod.Post, new { id = "editForm" }))
+{
+    @Html.AntiForgeryToken()
+
+    <table class="table">
+        <tr>
+            <th>Sản phẩm</th>
+            <th>Màu sắc</th>
+            <th>Size</th>
+            <th>Số lượng</th>
+        </tr>
+        @for (int i = 0; i < Model.Count; i++)
+        {
+            <tr>
+
+                <td>@Html.DisplayFor(modelItem => Model[i].Product.ProductName)</td>
+
+                <td>@Html.DisplayFor(modelItem => Model[i].Color.ColorName)</td>
+
+                <td>@Html.DisplayFor(modelItem => Model[i].Size.SizeName)</td>
+                <td>
+                    <input type="hidden" id="productId_@i" value="@Model[i].Product.ProductID" />
+                    <input type="hidden" id="productDetailId_@i" value="@Model[i].ProductDetailID" />
+                    <input type="hidden" id="colorId_@i" value="@Model[i].ColorID" />
+                    <input type="hidden" id="sizeId_@i" value="@Model[i].SizeID" />
+                    <input type="number" id="quantity_@i" value="@Model[i].Quantity" />
+
+                </td>
+            </tr>
+        }
+    </table>
+    <div class="form-group">
+        <div class="col-md-offset-2 col-md-10">
+            <input id="saveButton" class="btn btn-success m-r-5" type="submit" value="Thêm" class="btn btn-default" />
+            <a class="btn btn-danger m-r-5" href="@Url.Action("Index", "Products")" title="Back">Hủy</a>
+        </div>
+    </div>
+}
+
+<script>
+ $(document).ready(function () {
+    $("#editForm").submit(function (event) {
+        event.preventDefault(); // Ngăn chặn gửi form một cách tự động
+
+        var productDetails = []; // Khởi tạo mảng để lưu trữ các đối tượng productDetail
+
+        // Lặp qua mỗi hàng trong bảng
+        $("#editForm table tr:gt(0)").each(function () {
+            // Lấy giá trị của các ô input trong từng hàng
+            var productId = parseInt($(this).find('input[id^="productId_"]').val());
+            var productDetailId = parseInt($(this).find('input[id^="productDetailId_"]').val());
+            var colorId = parseInt($(this).find('input[id^="colorId_"]').val());
+            var sizeId = parseInt($(this).find('input[id^="sizeId_"]').val());
+            var quantity = parseInt($(this).find('input[id^="quantity_"]').val());
+
+            // Tạo đối tượng productDetail từ các giá trị thu thập được
+            var productDetail = {
+                ProductID: productId,
+                ProductDetailID: productDetailId,
+                ColorID: colorId,
+                SizeID: sizeId,
+                Quantity: quantity
+            };
+
+            // Thêm productDetail vào mảng productDetails
+            productDetails.push(productDetail);
+        });
+
+        console.log(productDetails);
+        console.log(JSON.stringify(productDetails));
+
+        var token = $('input[name="__RequestVerificationToken"]').val();
+         $.ajax({
+        url: '@Url.Action("Edit", "ProductDetails")',
+        type: 'POST',
+        data: { productDetails: productDetails, __RequestVerificationToken: token }, // Thêm token vào dữ liệu gửi đi
+         success: function (result) { // Hàm được gọi khi request thành công
+                console.log("Chỉnh sửa thành công");
+                window.location.href = '@Url.Action("Index", "Products")';
+            },
+            error: function (xhr, status, error) { // Hàm được gọi khi có lỗi xảy ra trong quá trình request
+                console.error("Lỗi khi chỉnh sửa: " + error);
+                // Xử lý lỗi nếu cần
+            }
+    });
+        // Gửi dữ liệu đến hành động chỉnh sửa trong controller bằng ajax
+        @*$.ajax({
+            url: '@Url.Action("Edit", "ProductDetails")', // Đường dẫn tới hành động Edit trong controller ProductDetails
+            type: 'POST', // Phương thức HTTP là POST
+            dataType: 'json', // Kiểu dữ liệu mong đợi trả về từ server
+            contentType: 'application/json', // Loại dữ liệu gửi đi là JSON
+            data: JSON.stringify(productDetails), // Dữ liệu gửi đi được chuyển đổi thành JSON trước khi gửi đi
+            success: function (result) { // Hàm được gọi khi request thành công
+                console.log("Chỉnh sửa thành công");
+                // Thực hiện các hành động khác sau khi chỉnh sửa thành công nếu cần
+            },
+            error: function (xhr, status, error) { // Hàm được gọi khi có lỗi xảy ra trong quá trình request
+                console.error("Lỗi khi chỉnh sửa: " + error);
+                // Xử lý lỗi nếu cần
+            }
+        });*@
+
+    });
+});
+
+</script>
+

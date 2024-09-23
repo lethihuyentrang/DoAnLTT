@@ -1,0 +1,77 @@
+﻿@model QLBQA.Models.Account
+
+@{
+    ViewBag.Title = "Thông tin chi tiết";
+    Layout = "~/Areas/Admin/Views/Shared/_AdminLayout.cshtml";
+}
+
+<div class="card">
+
+    <div class="card-body">
+        <h4 class="card-title">Thông tin chi tiết</h4>
+        <div class="table-responsive">
+            <table class="product-info-table m-t-20">
+                <tbody>
+                    <tr>
+                        <td>ID</td>
+                        <td class="text-dark font-weight-semibold">@Model.AccountID</td>
+                    </tr>
+                    <tr>
+                        <td>Số điện thoại</td>
+                        <td>@Model.Phone</td>
+                    </tr>
+                    <tr>
+                        <td>Email</td>
+                        <td>@Model.Email</td>
+                    </tr>
+                    @*<tr>
+                        <td>Salt</td>
+                        <td>@Model.Salt</td>
+                    </tr>*@
+                    <tr>
+                        <td>Trạng thái</td>
+                        <td>
+                            @if (Model.Active)
+                            {
+                                <div class="d-flex align-items-center">
+                                    <div class="badge badge-success badge-dot m-r-10"></div>
+                                    <div>Active</div>
+                                </div>
+                            }
+                            else
+                            {
+                                <div class="d-flex align-items-center">
+                                    <div class="badge badge-danger badge-dot m-r-10"></div>
+                                    <div>Block</div>
+                                </div>
+                            }
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Họ tên</td>
+                        <td>@Model.FullName</td>
+                    </tr>
+                    <tr>
+                        <td>Quyền truy cập</td>
+                        <td>@Model.Role.RoleName</td>
+                    </tr>
+                    <tr>
+                        <td>Đăng nhập lần cuối</td>
+                        <td>@Model.LastLogin</td>
+                    </tr>
+                    <tr>
+                        <td>Ngày tạo tài khoản</td>
+                        <td>@Model.CreateDate</td>
+                    </tr>
+
+                </tbody>
+            </table>
+
+        </div>
+    </div>
+
+</div>
+<p>
+    <a class="btn btn-warning m-r-5" href="@Url.Action("Edit", "Accounts", new { id = Model.AccountID })" title="Edit">Sửa</a>
+    <a class="btn btn-info m-r-5" href="@Url.Action("Index", "Accounts")" title="Back">Trở về</a>
+</p>

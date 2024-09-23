@@ -1,0 +1,116 @@
+﻿@model PagedList.IPagedList<QLBQA.Models.Color>
+@using PagedList.Mvc;
+<link href="~/Content/PagedList.css" rel="stylesheet" type="text/css" />
+
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Areas/Admin/Views/Shared/_AdminLayout.cshtml";
+}
+
+<div class="page-header">
+    <div class="header-sub-title">
+        <nav class="breadcrumb breadcrumb-dash">
+            <a href="@Url.Action("Index", "Home", new { area = "Admin" })" class="breadcrumb-item"><i class="anticon anticon-home m-r-5"></i>Home</a>
+            <span class="breadcrumb-item active">Quản lý thuộc tính</span>
+            <span class="breadcrumb-item active">Quản lý màu sắc</span>
+        </nav>
+    </div>
+</div>
+
+<p>
+
+    <a class="btn btn-secondary btn-tone m-r-5" href="@Url.Action("Create", "Colors")" title="Create">Thêm mới</a>
+
+</p>
+
+
+@* Thông bao lỗi *@
+@if (TempData["ErrMsg"] != null)
+{
+    ViewBag.ErrMsg = TempData["ErrMsg"].ToString();
+    TempData["ErrMsg"] = null;
+    <div id="alertMessage" class="alert alert-danger" role="alert">
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+        <i class="anticon anticon-warning"></i>
+        @ViewBag.ErrMsg
+    </div>
+}
+<style>
+    #alertMessage {
+        transition: opacity 1s ease-in-out;
+    }
+</style>
+<script>
+    var disappearingDiv = document.getElementById("alertMessage");
+    function makeDisappear() {
+        disappearingDiv.style.opacity = 0;
+    }
+    setTimeout(makeDisappear, 5000);
+</script>
+@* End thông báo lỗi *@
+
+
+<div class="table-responsive">
+    <table class="table">
+        <thead>
+            <tr>
+                <th scope="col">ID</th>
+                <th scope="col">Tên màu</th>
+                <th scope="col">Mã màu</th>
+                <th scope="col"></th>
+                <th scope="col">#</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (Model != null)
+            {
+                foreach (var item in Model)
+                {
+                    <tr>
+                        <th scope="row">@item.ColorID</th>
+                        <td>@item.ColorName</td>
+                        <td>@item.ColorCode</td>
+                        <td>
+                            <div class="circle" style=" background-color: @item.ColorCode;"></div>
+                        </td>
+                        <td>
+                            <a class="btn btn-primary btn-tone m-r-5" href="@Url.Action("Details", "Colors", new { id = item.ColorID })" title="Details">Chi tiết</a>
+                            <a class="btn btn-warning btn-tone m-r-5" href="@Url.Action("Edit", "Colors", new { id = item.ColorID })" title="Edit">Sửa</a>
+                            <a class="btn btn-danger btn-tone m-r-5" href="@Url.Action("Delete", "Colors", new { id = item.ColorID })" title="Delete">Xóa</a>
+
+
+                        </td>
+                    </tr>
+                }
+            }
+
+        </tbody>
+    </table>
+</div>
+<div id="pages">
+    <div id="pages">
+        @Html.PagedListPager(Model,
+             page => Url.Action("Index", "Colors", new { page, currentFilter = ViewBag.CurrentFilter }),
+            new PagedListRenderOptions
+                {
+                    DisplayLinkToFirstPage = PagedListDisplayMode.Always,
+                DisplayLinkToLastPage = PagedListDisplayMode.Always,
+                MaximumPageNumbersToDisplay = 5,
+                EllipsesFormat = "&#8230;",
+                LinkToPreviousPageFormat = "<",
+                LinkToNextPageFormat = ">",
+                LinkToFirstPageFormat = "<<",
+                LinkToLastPageFormat = ">>",
+            })
+    </div>
+
+</div>
+<style>
+    .circle {
+        width: 20px;
+        height: 20px;
+        border-radius: 50%;
+    }
+</style>

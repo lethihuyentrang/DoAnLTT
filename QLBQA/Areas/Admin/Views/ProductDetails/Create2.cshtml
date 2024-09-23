@@ -1,0 +1,289 @@
+﻿@model QLBQA.Models.ProductDetail
+
+@{
+    ViewBag.Title = "Thêm thuộc tính";
+    Layout = "~/Areas/Admin/Views/Shared/_AdminLayout.cshtml";
+}
+
+<h2>Thêm thuộc tính</h2>
+@using QLBQA.Models;
+@{
+    // Lấy giá trị ProductId từ TempData
+    int productId = Convert.ToInt32(TempData["ProductId"]);
+    string productName = TempData["ProductName"] as string;
+}
+
+<!
+
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+
+    <div class="form-horizontal">
+
+        <hr />
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+        <div class="form-group">
+            <p class="control-label col-md-3">Sản phẩm</p>
+
+
+            <div class="col-md-12">
+                <p id="productName"></p>
+                @Html.ValidationMessageFor(model => model.ProductID, "", new { @class = "text-danger", id = "productID" })
+            </div>
+        </div>
+        <div class="row">
+            <div class="form-group col-6">
+
+                <div class="col-md-12">
+                    <select id="colorDropdown">
+                        <option disabled selected>Chọn màu</option>
+
+                        @foreach (var color in ViewBag.Colors)
+                        {
+                            <option value="@color.ColorID" style="background: @color.ColorCode; color:white">
+
+                                @color.ColorName
+                            </option>
+                        }
+                    </select>
+                </div>
+            </div>
+            <div class="form-group col-6">
+
+                <div class="col-md-12">
+                    <select id="sizeDropdown">
+                        <option disabled selected>Chọn Size</option>
+                        @foreach (var size in ViewBag.Sizes)
+                        {
+                            <option value="@size.SizeID">@size.SizeName</option>
+                        }
+                    </select>
+                </div>
+            </div>
+
+        </div>
+
+
+        <div class="row">
+            <div class="form-group col-6">
+                <label class="control-label col-md-3" for="selectedColors">Màu đã chọn</label>
+                <div class="col-md-12">
+                    <select id="selectedColors" multiple required oninvalid="this.setCustomValidity('Vui lòng chọn ít nhất một màu.')">
+                        <!-- Các tùy chọn màu -->
+                    </select>
+                </div>
+            </div>
+
+            <div class="form-group col-6">
+                <label class="control-label col-md-3" for="selectedSizes">Size đã chọn</label>
+                <div class="col-md-12">
+                    <select id="selectedSizes" multiple required oninvalid="this.setCustomValidity('Vui lòng chọn ít nhất một size.')">
+                        <!-- Các tùy chọn size -->
+                    </select>
+                </div>
+            </div>
+        </div>
+
+
+
+
+        @*<div class="form-group">
+                <label class="control-label col-md-2">Quantity</label>
+                <div class="col-md-10">
+                    <input type="number" id="quantityInput" class="form-control" />
+                </div>
+            </div>*@
+
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-10">
+                <input type="button" value="Thêm và tiếp tục" class="btn btn-success" onclick="addProductDetails()" />
+                <a id="cancelLink" class="btn btn-danger" href="@Url.Action("CancelCreate", "ProductDetails")" title="Back">Hủy</a>
+            </div>
+        </div>
+    </div>
+}
+
+<script>
+   function addProductDetails() {
+   var productDetails = [];
+       var productId = document.getElementById("productID").innerText;
+
+       var selectedColorOptions = document.querySelectorAll('#selectedColors option');
+       var colors = Array.from(selectedColorOptions).map(option => option.value);
+
+       // Lấy giá trị của các option đã chọn trong dropdown size
+       // Lấy giá trị của các option đã chọn trong dropdown size
+       var selectedSizeOptions = document.querySelectorAll('#selectedSizes option');
+       var sizes = Array.from(selectedSizeOptions).map(option => option.value);
+       if (selectedColors.options.length === 0 || selectedSizes.options.length === 0) {
+           // Hiển thị thông báo lỗi
+           alert("Vui lòng chọn ít nhất một màu và một size trước khi thêm thuộc tính.");
+           return;
+       }
+
+
+        for (var j = 0; j < colors.length; j++) {
+            for (var k = 0; k < sizes.length; k++) {
+                var productDetail = {
+                    ProductID: productId,
+                    ColorID: colors[j],
+                    SizeID: sizes[k],
+                    Quantity: 1 // Quantity can be adjusted as needed
+                };
+                productDetails.push(productDetail);
+            }
+        }
+       console.log(productDetails);
+
+    // Lấy giá trị của token anti-forgery
+    var token = $('input[name="__RequestVerificationToken"]').val();
+
+    $.ajax({
+        url: '@Url.Action("Create2", "ProductDetails")',
+        type: 'POST',
+        data: { productDetails: productDetails, __RequestVerificationToken: token }, // Thêm token vào dữ liệu gửi đi
+         success: function (response) {
+            // Handle success
+            var addedProductIds = response;
+            // Chuyển hướng đến Edit và truyền danh sách các bản ghi vừa thêm vào
+            window.location.href = '@Url.Action("Edit2", "ProductDetails")' + '?id=' + addedProductIds;
+        },
+        error: function () {
+            //alert('Không thể thêm thuộc tính màu sắc và size đã tồn tại');
+        }
+    });
+    }
+
+    document.addEventListener("DOMContentLoaded", function () {
+        var colorDropdown = document.getElementById('colorDropdown');
+        var selectedColors = document.getElementById('selectedColors');
+
+        colorDropdown.addEventListener('change', function () {
+            var selectedOption = colorDropdown.options[colorDropdown.selectedIndex];
+            // Kiểm tra xem mục đã được chọn trước đó chưa
+            if (!isAlreadySelected(selectedOption.value, selectedColors)) {
+                var optionClone = selectedOption.cloneNode(true);
+                selectedColors.appendChild(optionClone);
+            }
+        });
+
+        selectedColors.addEventListener('click', function (event) {
+            var target = event.target;
+            if (target.tagName === 'OPTION') {
+                selectedColors.removeChild(target);
+            }
+        });
+
+        // Hàm kiểm tra xem một giá trị đã được chọn trước đó chưa
+        function isAlreadySelected(value, selectElement) {
+            var options = selectElement.getElementsByTagName('option');
+            for (var i = 0; i < options.length; i++) {
+                if (options[i].value === value) {
+                    return true;
+                }
+            }
+            return false;
+        }
+    });
+    document.addEventListener("DOMContentLoaded", function () {
+        var sizeDropdown = document.getElementById('sizeDropdown');
+        var selectedSizes = document.getElementById('selectedSizes');
+
+        sizeDropdown.addEventListener('change', function () {
+            var selectedOption = sizeDropdown.options[sizeDropdown.selectedIndex];
+            if (!isAlreadySelected(selectedOption.value, selectedSizes)) {
+                var optionClone = selectedOption.cloneNode(true);
+                selectedSizes.appendChild(optionClone);
+            }
+        });
+
+        selectedSizes.addEventListener('click', function (event) {
+            var target = event.target;
+            if (target.tagName === 'OPTION') {
+                selectedSizes.removeChild(target);
+            }
+        });
+
+        function isAlreadySelected(value, selectElement) {
+            var options = selectElement.getElementsByTagName('option');
+            for (var i = 0; i < options.length; i++) {
+                if (options[i].value === value) {
+                    return true;
+                }
+            }
+            return false;
+        }
+    });
+    window.onload = function () {
+        // Lấy giá trị từ Local Storage khi trang được tải
+        var productId = localStorage.getItem("productId");
+        var productName = localStorage.getItem("productName");
+        // Hiển thị giá trị trên HTML
+        document.getElementById("productID").innerText = productId;
+        document.getElementById("productName").innerText = productName;
+        var cancelLink = document.getElementById("cancelLink");
+
+        var currentHref = cancelLink.getAttribute("href");
+
+        var newHref = currentHref + "/"+productId;
+
+        cancelLink.setAttribute("href", newHref);
+    };
+</script>
+
+<style>
+    /* Customize the appearance of dropdowns */
+    #colorDropdown {
+        width: 100%;
+        padding: 8px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        box-sizing: border-box;
+        margin-bottom: 10px;
+    }
+
+    /* Style the selected colors dropdown */
+    #selectedColors {
+        width: 100%;
+        padding: 8px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        box-sizing: border-box;
+        margin-bottom: 10px;
+        height: 150px; /* Customize height as needed */
+        overflow-y: auto; /* Add scrollbar if needed */
+    }
+
+    #sizeDropdown {
+        width: 100%;
+        padding: 8px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        box-sizing: border-box;
+        margin-bottom: 10px;
+    }
+
+    /* Style the selected sizes dropdown */
+    #selectedSizes {
+        width: 100%;
+        padding: 8px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        box-sizing: border-box;
+        margin-bottom: 10px;
+        height: 150px; /* Customize height as needed */
+        overflow-y: auto; /* Add scrollbar if needed */
+    }
+
+    .circle {
+        width: 20px;
+        height: 20px;
+        border-radius: 50%;
+    }
+    /* Ghi đè các hiệu ứng mặc định khi di chuột vào tùy chọn */
+    option {
+        padding: 5px; /* Đặt màu nền của tùy chọn thành trong suốt */
+    }
+</style>

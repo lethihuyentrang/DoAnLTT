@@ -1,0 +1,28 @@
+﻿@model List<QLBQA.Models.Order>
+
+@if (Model != null)
+{
+    <tr>
+        <th>MÃ ĐƠN HÀNG</th>
+        <th>NGÀY TẠO</th>
+        <th>TRẠNG THÁI</th>
+        <th>TỔNG TIỀN</th>
+        <th></th>
+    </tr>
+    foreach (var item in Model)
+    {
+        <tr>
+            <td><a class="account-order-id" href="javascript:void(0)">#@item.OrderID</a></td>
+            <td>@item.OrderDate</td>
+            <td>@item.TransactStatus.Status</td>
+            <td>@item.OrderDetail.Total đ cho @item.OrderDetail.Quantity sản phẩm</td>
+            <td>
+                <a href="javascript:void(0)" class="btn btn-secondary btn-primary-hover"><span>Xem</span></a>
+            </td>
+        </tr>
+    }
+}
+else
+{
+    <tr>Bạn chưa có đơn hàng nào, <a href="@Url.Action("Index","Product")"> Shopping ngay!</a></tr>
+}

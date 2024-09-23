@@ -1,0 +1,556 @@
+﻿@model PagedList.IPagedList<QLBQA.Models.Product>
+@using PagedList.Mvc;
+<link href="~/Content/PagedList.css" rel="stylesheet" type="text/css" />
+@{
+    ViewBag.Title = "Product Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@{
+    var Colors = ViewBag.Colors;
+    var HotProduct = ViewBag.HotProduct;
+}
+
+<main class="main-content">
+    <div class="breadcrumb-area breadcrumb-height" data-bg-image="assets/images/breadcrumb/bg/1-1-1920x373.jpg">
+        <div class="container h-100">
+            <div class="row h-100">
+                <div class="col-lg-12">
+                    <div class="breadcrumb-item">
+                        <h2 class="breadcrumb-heading">CỬA HÀNG</h2>
+                        <ul>
+                            <li>
+                                <a href="@Url.Action("Index","Home")">Home <i class="pe-7s-angle-right"></i></a>
+                            </li>
+                            <li>Shop</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="shop-area section-space-y-axis-100">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-3 order-lg-1 order-2 pt-10 pt-lg-0">
+                    <div class="sidebar-area">
+                        <div class="widgets-searchbox mb-9">
+                            @using (Html.BeginForm(null, null, FormMethod.Get, new { id = "widgets-searchbox" }))
+                            {
+
+                                @Html.TextBox("SearchString", ViewBag.CurrentFilter as string, new { @class = "input-field", placeholder = "Nhập tên sản phẩm..." })
+                                <button class="widgets-searchbox-btn" type="submit">
+                                    <i class="pe-7s-search"></i>
+                                </button>
+
+                            }
+
+                        </div>
+                        <div class="widgets-area mb-9">
+                            <h2 class="widgets-title mb-5">Lọc theo</h2>
+                            <div class="widgets-item">
+                                <ul class="widgets-checkbox">
+                                    <li>
+                                        <input class="input-checkbox" type="checkbox" id="refine-item" name="isDiscount">
+                                        <label class="label-checkbox mb-0" for="refine-item">
+                                            Giảm giá
+                                        </label>
+                                    </li>
+                                    <li>
+                                        <input class="input-checkbox" type="checkbox" id="refine-item-2" name="isHot">
+                                        <label class="label-checkbox mb-0" for="refine-item-2">
+                                            Bán chạy
+                                        </label>
+                                    </li>
+                                    <li>
+                                        <input class="input-checkbox" type="checkbox" id="refine-item-3" name="isInStock">
+                                        <label class="label-checkbox mb-0" for="refine-item-3">
+                                            Còn hàng
+                                        </label>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <div class="widgets-area mb-9">
+                            <h2 class="widgets-title mb-5">Giá</h2>
+                            <div class="widgets-item">
+                                <ul class="widgets-checkbox">
+                                    <li>
+                                        <input class="input-checkbox radioCheck" type="checkbox" id="color-selection-1" name="isLowPrice">
+                                        <label class="label-checkbox mb-0" for="color-selection-1">
+                                            0-200,000 đ
+                                        </label>
+                                    </li>
+                                    <li>
+                                        <input class="input-checkbox radioCheck" type="checkbox" id="color-selection-2" name="isMediumPrice">
+                                        <label class="label-checkbox mb-0" for="color-selection-2">
+                                            200,000 - 500,000 đ
+                                        </label>
+                                    </li>
+                                    <li>
+                                        <input class="input-checkbox radioCheck" type="checkbox" id="color-selection-3" name="isHighPrice">
+                                        <label class="label-checkbox mb-0" for="color-selection-3">
+                                            500,000 - 1,000,000 đ
+                                        </label>
+                                    </li>
+                                    <li>
+                                        <input class="input-checkbox radioCheck" type="checkbox" id="color-selection-4" name="isVeryHighPrice">
+                                        <label class="label-checkbox mb-0" for="color-selection-4">
+                                            &gt; 1,000,000 đ
+                                        </label>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <div class="widgets-area mb-9">
+                            <h2 class="widgets-title mb-5">Size</h2>
+                            <div class="widgets-item">
+                                <ul class="widgets-checkbox">
+                                    <li>
+                                        <input class="input-checkbox" type="checkbox" id="size-selection-1" name="isSSize">
+                                        <label class="label-checkbox mb-0" for="size-selection-1">S</label>
+                                    </li>
+                                    <li>
+                                        <input class="input-checkbox" type="checkbox" id="size-selection-2" name="isMSize">
+                                        <label class="label-checkbox mb-0" for="size-selection-2">M</label>
+                                    </li>
+                                    <li>
+                                        <input class="input-checkbox" type="checkbox" id="size-selection-3" name="isLSize">
+                                        <label class="label-checkbox mb-0" for="size-selection-3">L</label>
+                                    </li>
+                                    <li>
+                                        <input class="input-checkbox" type="checkbox" id="size-selection-4" name="isXLSize">
+                                        <label class="label-checkbox mb-0" for="size-selection-4">XL</label>
+                                    </li>
+                                    <li>
+                                        <input class="input-checkbox" type="checkbox" id="size-selection-5" name="is2XLSize">
+                                        <label class="label-checkbox mb-0" for="size-selection-5">2XL</label>
+                                    </li>
+                                    <li>
+                                        <input class="input-checkbox" type="checkbox" id="size-selection-6" name="is3XLSize">
+                                        <label class="label-checkbox mb-0" for="size-selection-6">3XL</label>
+                                    </li>
+                                </ul>
+                            </div>
+                            <div class="widgets-item">
+                                <a class="btn btn-custom-size lg-size btn-primary btn-secondary-hover rounded-0 btn-clear-filter">Xóa bộ lọc</a>
+                            </div>
+
+
+                        </div>
+
+                        <div class="widgets-area mb-9">
+                            <h2 class="widgets-title mb-5">Sản phẩm bán chạy</h2>
+                            <div class="widgets-item">
+                                <div class="swiper-container widgets-list-slider">
+                                    <div class="swiper-wrapper">
+                                        @foreach (var item in ViewBag.HotProduct)
+                                        {
+                                            <div class="swiper-slide">
+                                                <div class="product-list-item">
+                                                    <div class="product-img img-zoom-effect">
+                                                        <a href="@Url.Action("Details", new { id = item.ProductID })">
+                                                            <img class="img-full" src="~/Content/images/thumb_@item.Thumb" alt="Product Images">
+                                                        </a>
+                                                    </div>
+                                                    <div class="product-content">
+                                                        <a class="product-name" href="@Url.Action("Details", new { id = item.ProductID })">@item.ProductName</a>
+                                                        <div class="price-box pb-1">
+                                                            @if (item.Discount > 0)
+                                                                {
+
+                                                                <span style = "color: black; font-size:medium" class="new-price"><del>@item.Price.ToString("#,##0") đ</del> @item.Discount.ToString("#,##0") đ</span>
+
+                                                            }
+                                                            else
+                                                            {
+                                                                <span style="color: black; font-size:medium" class="new-price">@item.Price.ToString("#,##0") đ</span>
+                                                            }
+                                                        </div>
+
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        }
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        @*<div class="widgets-area">
+                                <h2 class="widgets-title mb-5">Tag</h2>
+                                <div class="widgets-item">
+                                    <ul class="widgets-tags">
+                                        <li>
+                                            <a href="javascript:void(0)">Clothing</a>
+                                        </li>
+                                        <li>
+                                            <a href="javascript:void(0)">Accessories</a>
+                                        </li>
+                                        <li>
+                                            <a href="javascript:void(0)">For Men</a>
+                                        </li>
+                                        <li>
+                                            <a href="javascript:void(0)">Women</a>
+                                        </li>
+                                        <li>
+                                            <a href="javascript:void(0)">Fashion</a>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>*@
+                    </div>
+                </div>
+                <div class="col-lg-9 order-lg-2 order-1">
+                    <div class="product-topbar">
+                        <ul>
+                            <li class="product-view-wrap">
+                                <ul class="nav" role="tablist">
+                                    <li class="grid-view" role="presentation">
+                                        <a class="active" id="grid-view-tab" data-bs-toggle="tab" href="#grid-view" role="tab" aria-selected="true">
+                                            <i class="fa fa-th"></i>
+                                        </a>
+                                    </li>
+                                    <li class="list-view" role="presentation">
+                                        <a id="list-view-tab" data-bs-toggle="tab" href="#list-view" role="tab" aria-selected="true">
+                                            <i class="fa fa-th-list"></i>
+                                        </a>
+                                    </li>
+                                </ul>
+                            </li>
+                            <li class="page-count">
+
+                            </li>
+
+                            <li class="short">
+                                <select id="catSelect" class="nice-select wide rounded-0 custom-select">
+                                    <option value="">
+                                        Tất cả
+                                    </option>
+                                    @foreach (var cat in ViewBag.Cats)
+                                    {
+                                        <option value="@cat.CatID">@cat.CatName</option>
+                                    }
+                                </select>
+
+                            </li>
+                        </ul>
+                    </div>
+
+                    <div id="accountTable" class="tab-content text-charcoal pt-8">
+
+                        @if (Model != null)
+                        {
+                            <div class="tab-pane fade show active" id="grid-view" role="tabpanel" aria-labelledby="grid-view-tab">
+                                <div class="product-grid-view row">
+                                    @foreach (var item in Model)
+                                    {
+                                        <div class="col-lg-4 col-sm-6">
+                                            <div class="product-item">
+                                                <div class="product-img img-zoom-effect">
+                                                    <a href="@Url.Action("Details", new { id = item.ProductID })">
+                                                        <img class="img-full" src="~/Content/images/thumb_@item.Thumb" alt="Product Images">
+                                                    </a>
+                                                </div>
+                                                <div class="product-content">
+                                                    <a class="product-name clamp-2" href="@Url.Action("Details", new { id = item.ProductID })">@item.ProductName</a>
+                                                    <div class="price-box pb-1">
+                                                        @if (item.Discount > 0)
+                                                        {
+
+                                                        <span style="color: black; font-size:medium" class="new-price"><del>@string.Format("{0:#,##0}", item.Price) đ</del> @string.Format("{0:#,##0}", item.Discount) đ</span> }
+                                                                        else
+                                                                        {
+                                                    <span style="color: black; font-size:medium" class="new-price">@string.Format("{0:#,##0}", item.Price) đ</span>}
+                                                    </div>
+
+                                                    @foreach (var color in Colors)
+                                                    {
+                                                        <div class="circle" style=" background-color: @color.ColorCode;"></div>
+
+                                                    }
+
+
+                                                </div>
+                                            </div>
+                                        </div>
+                                    }
+
+
+                                </div>
+                            </div>
+                            <div class="tab-pane fade" id="list-view" role="tabpanel" aria-labelledby="list-view-tab">
+                                <div class="product-list-view row">
+                                    @foreach (var item in Model)
+                                    {
+                                        <div class="col-12">
+                                            <div class="product-item">
+                                                <div class="product-img img-zoom-effect">
+                                                    <a href="@Url.Action("Details", new { id = item.ProductID })">
+                                                        <img class="img-full" src="~/Content/images/thumb_@item.Thumb" alt="Product Images">
+                                                    </a>
+                                                </div>
+                                                <div class="product-content align-self-center">
+                                                    <a class="product-name pb-2" href="@Url.Action("Details", new { id = item.ProductID })">@item.ProductName</a>
+                                                    <div class="price-box pb-1">
+                                                        @if (item.Discount > 0)
+                                                        {
+
+                                                        <span style="color: black; font-size:medium" class="new-price"><del>@string.Format("{0:#,##0}", item.Price) đ</del> @string.Format("{0:#,##0}", item.Discount) đ</span> }
+                                                                        else
+                                                                        {
+                                                    <span style="color: black; font-size:medium" class="new-price">@string.Format("{0:#,##0}", item.Price) đ</span>}
+                                                    </div>
+                                                    @*@foreach (var color in Colors)
+                                                        {
+                                                            <div class="circle" style=" background-color: @color.ColorCode;"></div>
+
+                                                        }*@
+                                                    <p class="short-desc mb-0">@item.Description</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    }
+
+                                </div>
+                            </div>
+                        }
+
+
+                    </div>
+
+                    <div id="pages">
+                        @Html.PagedListPager(Model,
+                             page => Url.Action("Index", "Product", new { page, currentFilter = ViewBag.CurrentFilter }),
+                            new PagedListRenderOptions
+                                {
+                                    DisplayLinkToFirstPage = PagedListDisplayMode.Always, // Hiển thị liên kết đến trang đầu tiên
+                                DisplayLinkToLastPage = PagedListDisplayMode.Always, // Hiển thị liên kết đến trang cuối cùng
+                                MaximumPageNumbersToDisplay = 5, // Số lượng trang tối đa để hiển thị
+                                EllipsesFormat = "&#8230;", // Định dạng dấu ...
+                                LinkToPreviousPageFormat = "<",
+                                LinkToNextPageFormat = ">",
+                                LinkToFirstPageFormat = "<<", // Định dạng liên kết đến trang đầu tiên
+                                LinkToLastPageFormat = ">>", // Định dạng liên kết đến trang cuối cùng
+                            })
+                    </div>
+
+
+
+
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+@*<div id="accountTable2">
+
+    </div>*@
+<style>
+    .pagination .active a {
+        background-color: rgb(186, 195, 78) !important;
+    }
+
+    #pages {
+        display: flex;
+        justify-content: center;
+    }
+
+        #pages ul li a {
+            padding: 16px 20px;
+        }
+
+    .clamp-2 {
+        display: -webkit-box;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        -webkit-line-clamp: 2; /* Số dòng tối đa */
+        /* Cố định chiều cao của thẻ */
+        height: calc(2 * 1.5em); /* 1.2em là chiều cao của mỗi dòng (có thể điều chỉnh) */
+    }
+
+    .nice-select.wide .list {
+        left: -100px !important;
+        right: 0px !important;
+    }
+
+    .product-grid-view .col-lg-4 {
+        margin-bottom: 20px;
+    }
+
+    .product-list-view .col-12 {
+        margin-bottom: 20px;
+    }
+
+    .breadcrumb-height {
+        height: 260px;
+    }
+
+    .btn-custom-size.lg-size {
+        margin: 20px 0 0 0;
+        width: 262px;
+        height: 50px;
+        line-height: 50px;
+        font-size: 16px;
+    }
+    del {
+        color: darkred !important;
+    }
+</style>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    $(function () {
+        $('#catSelect').change(function () {
+            var catId = $(this).val();
+            var page = 1; // Mặc định là trang 1
+            var filters = {
+                isDiscount: false,
+                isHot: false,
+                isInStock: false,
+                isLowPrice: false,
+                isMediumPrice: false,
+                isHighPrice: false,
+                isVeryHighPrice: false,
+                isSSize: false,
+                isMSize: false,
+                isLSize: false,
+                isXLSize: false,
+                is2XLSize: false,
+                is3XLSize: false,
+                CatID: catId,
+                page: page // Thêm thông tin về trang hiện tại
+            };
+            $('.input-checkbox').each(function () {
+                var checkboxName = $(this).attr('name');
+                filters[checkboxName] = $(this).is(':checked');
+            });
+             $.ajax({
+                 url: '@Url.Action("FilterProduct", "Product")',
+                 method: 'GET',
+                 data: filters,
+                 success: function (data) {
+                     $('#accountTable').html(data);
+
+                     var hidePages = document.getElementById("pages");
+                     hidePages.style.display = "none";
+                 },
+                 error: function () {
+                     alert('Đã xảy ra lỗi, vui lòng thử lại sau.');
+                 }
+             });
+
+     });
+ });
+
+</script>
+<script>
+     $(document).ready(function () {
+         $('.input-checkbox').change(function () {
+
+             var catId = document.getElementById("catSelect").value;
+
+             var page = 1; // Mặc định là trang 1
+
+             var filters = {
+                 isDiscount: false,
+                 isHot: false,
+                 isInStock: false,
+                 isLowPrice: false,
+                 isMediumPrice: false,
+                 isHighPrice: false,
+                 isVeryHighPrice: false,
+                 isSSize: false,
+                 isMSize: false,
+                 isLSize: false,
+                 isXLSize: false,
+                 is2XLSize: false,
+                 is3XLSize: false,
+                 CatID: catId,
+                 page: page // Thêm thông tin về trang hiện tại
+             };
+
+             $('.input-checkbox').each(function () {
+                 var checkboxName = $(this).attr('name');
+                 filters[checkboxName] = $(this).is(':checked');
+             });
+
+             $.ajax({
+                 url: '@Url.Action("FilterProduct", "Product")',
+                 method: 'GET',
+                 data: filters,
+                 success: function (data) {
+                     $('#accountTable').html(data);
+
+                     var hidePages = document.getElementById("pages");
+                     hidePages.style.display = "none";
+                 },
+                 error: function () {
+                     alert('Đã xảy ra lỗi, vui lòng thử lại sau.');
+                 }
+             });
+         });
+     });
+
+</script>
+<script>
+     $(document).ready(function () {
+         $('.btn-clear-filter').click(function () {
+             $('.input-checkbox').prop('checked', false);
+             var catId = document.getElementById("catSelect").value;
+              var page = 1; // Mặc định là trang 1
+              var filters = {
+                  isDiscount: false,
+                  isHot: false,
+                  isInStock: false,
+                  isLowPrice: false,
+                  isMediumPrice: false,
+                  isHighPrice: false,
+                  isVeryHighPrice: false,
+                  isSSize: false,
+                  isMSize: false,
+                  isLSize: false,
+                  isXLSize: false,
+                  is2XLSize: false,
+                  is3XLSize: false,
+                  CatID: catId,
+                  page: page // Thêm thông tin về trang hiện tại
+             };
+
+
+             $.ajax({
+                 url: '@Url.Action("FilterProduct", "Product")',
+                 method: 'GET',
+                 data: filters,
+                 success: function (data) {
+                     $('#accountTable').html(data);
+
+                     var hidePages = document.getElementById("pages");
+                     hidePages.style.display = "none";
+                 },
+                 error: function () {
+                     alert('Đã xảy ra lỗi, vui lòng thử lại sau.');
+                 }
+             });
+
+         });
+     });
+
+</script>
+<script>
+    const checkboxes = document.querySelectorAll('.radioCheck');
+
+    checkboxes.forEach(checkbox => {
+        checkbox.addEventListener('click', function () {
+            if (this.checked) {
+                checkboxes.forEach(otherCheckbox => {
+                    if (otherCheckbox !== checkbox) {
+                        otherCheckbox.checked = false;
+                    }
+                });
+            }
+        });
+    });
+</script>
+

@@ -1,0 +1,76 @@
+﻿@model List<QLBQA.Models.OrderDetail>
+@using QLBQA.Models
+@{
+
+    List<ProductDetail> ProductDetails = ViewBag.ProductDetails as List<ProductDetail>;
+    List<Color> Colors = ViewBag.Colors as List<Color>;
+    List<Size> Sizes = ViewBag.Sizes as List<Size>;
+    var Sum = TempData["Sum"];
+
+}
+<div style=" overflow-x: auto; height: 300px;" class="table-responsive">
+
+    <table class="table table-hover e-commerce-table" id="accountTable">
+        <thead style="position: sticky; top: 0; background-color: #fff;">
+            <tr>
+                <th scope="col">Ngày giao dịch</th>
+
+                <th scope="col">Tên sản phẩm</th>
+                <th scope="col">Màu sắc</th>
+                <th scope="col">Kích cỡ</th>
+                <th scope="col">Số lượng</th>
+                <th scope="col">Đơn giá</th>
+                <th scope="col">Thành tiền</th>
+                <th scope="col">Tồn kho</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+
+                ProductDetail pDetail = ProductDetails.Where(x => x.ProductDetailID == item.ProductDetailID).FirstOrDefault();
+                Color color = Colors.Where(x => x.ColorID == pDetail.ColorID).FirstOrDefault();
+                Size size = Sizes.Where(x => x.SizeID == pDetail.SizeID).FirstOrDefault();
+                <tr>
+                    <td>@item.Order.OrderDate</td>
+
+                    <td>@pDetail.Product.ProductName</td>
+                    <td>
+                        <div class="circle" style=" background-color: @color.ColorCode;"></div>
+                    </td>
+                    <td>@size.SizeName</td>
+                    <td>@item.Quantity</td>
+                    @if (pDetail.Product.Discount > 0)
+                    {
+                        <td>@string.Format("{0:#,##0}", pDetail.Product.Discount) đ</td>
+                    }
+                    else
+                    {
+                        <td>@string.Format("{0:#,##0}", pDetail.Product.Price) đ</td>
+                    }
+                    @if (pDetail.Product.Discount > 0)
+                    {
+                        <td>@string.Format("{0:#,##0}", pDetail.Product.Discount * item.Quantity) đ</td>
+
+                    }
+                    else
+                    {
+                        <td>@string.Format("{0:#,##0}", pDetail.Product.Price * item.Quantity) đ</td>
+
+                    }
+                    <td>@pDetail.Quantity</td>
+                </tr>
+
+            }
+        </tbody>
+    </table>
+</div>
+<table style="margin-top: 16px;" class="table table-hover e-commerce-table" id="accountTable">
+    <tbody>
+        <tr>           
+            <td style="color: darkred; font-weight:bold">Tổng doanh thu: @string.Format("{0:#,##0}", Sum) đ</td>
+        </tr>
+    </tbody>
+   
+</table>
+

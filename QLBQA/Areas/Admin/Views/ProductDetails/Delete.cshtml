@@ -1,0 +1,63 @@
+﻿@model QLBQA.Models.ProductDetail
+
+@{
+    ViewBag.Title = "Xóa thuộc tính";
+    Layout = "~/Areas/Admin/Views/Shared/_AdminLayout.cshtml";
+}
+
+
+<h3>Bạn có chắc muốn xóa thuộc tính này?</h3>
+<div>
+
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            Sản phẩm
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Product.ProductName)
+        </dd>
+        <dt>
+            Màu sắc
+        </dt>
+        <dd>
+            <div class="circle" style=" background-color: @Model.Color.ColorCode;"></div>
+        </dd>
+
+
+
+        <dt>
+            Size
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Size.SizeName)
+        </dd>
+
+        <dt>
+            Số lượng
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Quantity)
+        </dd>
+
+    </dl>
+
+    @using (Html.BeginForm()) {
+        @Html.AntiForgeryToken()
+
+<div class="form-actions no-color">
+    <input class="btn btn-primary m-r-5" type="submit" value="Xóa" />
+    <a class="btn btn-danger m-r-5" href="@Url.Action("CancelDelete", "ProductDetails", new { id = Model.ProductID })" title="Back">Hủy</a>
+</div>
+    }
+</div>
+<style>
+    .circle {
+        width: 20px;
+        height: 20px;
+        border-radius: 50%;
+    }
+</style>

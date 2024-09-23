@@ -1,0 +1,129 @@
+﻿@model IEnumerable<QLBQA.Models.Account>
+
+@{
+    ViewBag.Title = "Danh sách tài khoản";
+    Layout = "~/Areas/Admin/Views/Shared/_AdminLayout.cshtml";
+}
+<head>
+    <title>Quản lý tài khoản</title>
+    <!-- Bao gồm thư viện jQuery -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <!-- Bao gồm thư viện jQuery Unobtrusive Ajax -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-ajax-unobtrusive/3.2.6/jquery.unobtrusive-ajax.min.js"></script>
+</head>
+
+<div class="page-header">
+    <div class="header-sub-title">
+        <nav class="breadcrumb breadcrumb-dash">
+            <a href="@Url.Action("Index", "Home", new { area = "Admin" })" class="breadcrumb-item"><i class="anticon anticon-home m-r-5"></i>Home</a>
+            <span class="breadcrumb-item active">Quản lý hệ thống</span>
+            <span class="breadcrumb-item active">Quản lý tài khoản</span>
+        </nav>
+    </div>
+</div>
+<div class="card">
+    <div class="card-body">
+        <div class="row m-b-30">
+            <div class="col-lg-8">
+                <div class="d-md-flex">
+                    <div class="m-b-10 m-r-15">
+                        <select id="roleSelect" class="custom-select" style="min-width: 180px;">
+                            <option value="">Tất cả</option>
+                            @foreach (var role in ViewBag.Roles)
+                            {
+                                <option value="@role.RoleID">@role.RoleName</option>
+                            }
+                        </select>
+
+
+                    </div>
+                    
+                </div>
+            </div>
+
+        </div>
+        <div id="accountTable" class="table-responsive">
+            <table class="table table-hover e-commerce-table">
+                <thead>
+                    <tr>
+
+                        <th>ID</th>
+                        <th>Họ tên</th>
+                        <th>Email</th>
+                        <th>Điện thoại</th>
+                        @*<th>Lần đăng nhập cuối</th>*@
+                        <th>Quyền truy cập</th>
+                        <th>Trạng thái</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (Model != null)
+                    {
+                        foreach (var item in Model)
+                        {
+                            <tr>
+                                <td>
+                                    @item.AccountID
+                                </td>
+                                <td>
+                                    <div class="d-flex align-items-center">
+                                        <img class="img-fluid rounded" src="assets/images/others/thumb-9.jpg" style="max-width: 60px" alt="">
+                                        <h6 class="m-b-0 m-l-10">@item.FullName</h6>
+                                    </div>
+                                </td>
+                                <td>@item.Email</td>
+                                <td>@item.Phone</td>
+                                @*<td>@item.LastLogin</td>*@
+                                <td>@item.Role.RoleName</td>
+                                <td>
+                                    @if (item.Active)
+                                    {
+                                        <div class="d-flex align-items-center">
+                                            <div class="badge badge-success badge-dot m-r-10"></div>
+                                            <div>Active</div>
+                                        </div>
+                                    }
+                                    else
+                                    {
+                                        <div class="d-flex align-items-center">
+                                            <div class="badge badge-danger badge-dot m-r-10"></div>
+                                            <div>Block</div>
+                                        </div>
+                                    }
+
+                                </td>
+                                <td>
+                                    <a class="btn btn-primary btn-tone m-r-5" href="@Url.Action("Details", "Accounts", new { id = item.AccountID })" title="Details">Chi tiết</a>
+                                    <a class="btn btn-warning btn-tone m-r-5" href="@Url.Action("Edit", "Accounts", new { id = item.AccountID })" title="Edit">Sửa</a>
+                                    <a class="btn btn-danger btn-tone m-r-5" href="@Url.Action("Delete", "Accounts", new { id = item.AccountID })" title="Delete">Xóa</a>
+                                </td>
+                            </tr>
+                        }
+                    }
+
+
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+<script>
+   $(document).ready(function () {
+    $('#roleSelect').change(function () {
+        var roleId = $(this).val();
+        $.ajax({
+            url: '@Url.Action("SelectFollowingRole", "Accounts")',
+            type: 'GET',
+            data: { id: roleId },
+            success: function (data) {
+                $('#accountTable tbody').html(data);
+            },
+            error: function () {
+                alert('Đã xảy ra lỗi, vui lòng thử lại sau.');
+            }
+        });
+    });
+});
+
+</script>

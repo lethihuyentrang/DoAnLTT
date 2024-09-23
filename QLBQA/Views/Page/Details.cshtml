@@ -1,0 +1,120 @@
+﻿@model QLBQA.Models.Page
+@{
+    ViewBag.Title = "Details";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@Model.PageName</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <style>
+        /* CSS styling for the news article */
+        .news-article {
+            background-color: #f9f9f9;
+            padding: 20px;
+            margin-bottom: 20px;
+            margin-left: 200px; /* margin bên trái */
+            margin-right: 400px; /* margin bên phải */
+            /* giới hạn chiều rộng của .news-article */
+            margin: 0 auto; /* căn giữa .news-article theo chiều ngang */
+        }
+
+            .news-article h1 {
+                color: #333;
+                font-size: 28px;
+                margin-bottom: 10px;
+            }
+
+            .news-article .sub-content {
+                color: #666;
+                font-size: 16px;
+                margin-bottom: 20px;
+            }
+
+            .news-article .main-content {
+                color: #333;
+                font-size: 18px;
+                line-height: 1.6;
+            }
+
+        /* CSS styling for the sidebar */
+        /*.sidebar {
+            position: sticky;
+            top: 60px;
+            right: 50px;*/ /* Adjust the value as needed */
+        /*width: 250px;*/ /* Adjust the width as needed */
+        /*background-color: #f2f2f2;
+            padding: 20px;
+            border-left: 1px solid #ddd;
+        }
+
+            .sidebar h2 {
+                font-size: 20px;
+                margin-bottom: 10px;
+            }
+
+            .sidebar ul {
+                list-style-type: none;
+                padding: 0;
+                margin: 0;
+            }
+
+            .sidebar li {
+                margin-bottom: 10px;
+            }
+
+                .sidebar li a {
+                    text-decoration: none;
+                    color: #333;
+                    font-size: 16px;
+                }*/
+    </style>
+</head>
+<div class="breadcrumb-area breadcrumb-height" data-bg-image="~/assets/User_assets/images/breadcrumb/bg/1-1-1920x373.jpg">
+    <div class="container h-100">
+        <div class="row h-100">
+            <div class="col-lg-12">
+                <div class="breadcrumb-item">
+                    <h2 style="text-transform: uppercase" class="breadcrumb-heading">@Model.PageName</h2>
+                    <ul>
+                        <li>
+                            <a href="~/Home/index">Home <i class="pe-7s-angle-right"></i></a>
+                        </li>
+                        <li>@Model.PageName</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<body>
+    <div class="news-article">
+       
+        <div class="main-content">
+            @Html.Raw(Model.Contents)
+        </div>
+    </div>
+
+    <div style="height:100px"></div>
+
+
+</body>
+</html>
+<style>
+    /* Thêm một lớp CSS mới cho sidebar khi nó biến mất */
+    .sidebar.hidden {
+        opacity: 0; /* Đặt opacity thành 0 khi biến mất */
+        transition: opacity 0.3s ease-in-out; /* Thêm hiệu ứng mượt mà */
+    }
+    .breadcrumb-height {
+        height: 260px;
+    }
+    .fab{
+        color:#666;
+    }
+</style>
+

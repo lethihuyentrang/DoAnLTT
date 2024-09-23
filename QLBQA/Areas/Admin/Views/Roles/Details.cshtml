@@ -1,0 +1,37 @@
+﻿@model QLBQA.Models.Role
+
+@{
+    ViewBag.Title = "Thông tin chi tiết";
+    Layout = "~/Areas/Admin/Views/Shared/_AdminLayout.cshtml";
+}
+<div class="card">
+
+    <div class="card-body">
+        <h4 class="card-title">Thông tin chi tiết</h4>
+        <div class="table-responsive">
+            <table class="product-info-table m-t-20">
+                <tbody>
+                    <tr>
+                        <td>ID</td>
+                        <td class="text-dark font-weight-semibold">@Model.RoleID</td>
+                    </tr>
+                    <tr>
+                        <td>Tên quyền truy cập</td>
+                        <td>@Model.RoleName</td>
+                    </tr>
+                    <tr>
+                        <td>Mô tả</td>
+                        <td>@Model.Description</td>
+                    </tr>
+
+                </tbody>
+            </table>
+
+        </div>
+    </div>
+
+</div>
+<p>
+    <a class="btn btn-warning m-r-5" href="@Url.Action("Edit", "Roles", new { id = Model.RoleID })" title="Edit">Sửa</a>
+    <a class="btn btn-info m-r-5" href="@Url.Action("Index", "Roles")" title="Back">Trở về</a>
+</p>

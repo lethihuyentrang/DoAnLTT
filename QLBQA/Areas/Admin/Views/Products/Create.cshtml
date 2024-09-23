@@ -1,0 +1,222 @@
+﻿@model QLBQA.Models.Product
+
+@{
+    ViewBag.Title = "Thêm sản phẩm";
+    Layout = "~/Areas/Admin/Views/Shared/_AdminLayout.cshtml";
+}
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>Enlink - Admin Dashboard Template</title>
+
+    <!-- Favicon -->
+    <link rel="shortcut icon" href="~/assets/Admin_assets/images/logo/favicon.png">
+
+    <!-- page css -->
+    <link href="~/assets/Admin_assets/vendors/select2/select2.css" rel="stylesheet">
+
+    <!-- Core css -->
+    <link href="~/assets/Admin_assets/css/app.min.css" rel="stylesheet">
+
+</head>
+
+<body>
+
+    @using (Html.BeginForm("Create", "Products", FormMethod.Post, new { enctype = "multipart/form-data" }))
+    {
+        @Html.AntiForgeryToken()
+
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+        <div class="page-header no-gutters has-tab">
+            <div class="d-md-flex m-b-15 align-items-center justify-content-between">
+                <div class="media align-items-center m-b-15">
+
+                    <div class="m-l-15">
+                        <h4 class="m-b-0">Thêm sản phẩm</h4>
+                    </div>
+                </div>
+
+            </div>
+            <ul class="nav nav-tabs">
+                <li class="nav-item">
+                    <a class="nav-link active" data-toggle="tab" href="#product-edit-basic">Thông tin cơ bản</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" data-toggle="tab" href="#product-edit-description">Mô tả</a>
+                </li>
+            </ul>
+        </div>
+        <div class="tab-content m-t-15">
+            <div class="tab-pane fade show active" id="product-edit-basic">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="form-group">
+                            <p class="control-label col-md-2">Tên sản phẩm</p>
+                            <div class="col-md-11">
+                                @Html.EditorFor(model => model.ProductName, new { htmlAttributes = new { @class = "form-control" } })
+                                @Html.ValidationMessageFor(model => model.ProductName, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+                        <div class="row">
+
+                            <div class="form-group col-6">
+                                <p class="control-label col-md-2">Giá</p>
+                                <div class="col-md-10">
+                                    @Html.EditorFor(model => model.Price, new { htmlAttributes = new { @class = "form-control" } })
+                                    @Html.ValidationMessageFor(model => model.Price, "", new { @class = "text-danger" })
+                                </div>
+                            </div>
+                            <div class="form-group col-6">
+                                <p class="control-label col-md-2">Giá giảm</p>
+                                <div class="col-md-10">
+                                    @Html.EditorFor(model => model.Discount, new { htmlAttributes = new { @class = "form-control" } })
+                                    @Html.ValidationMessageFor(model => model.Discount, "", new { @class = "text-danger" })
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="form-group col-6">
+                                <p class="control-label col-md-3">Danh mục</p>
+                                <div class="col-md-10">
+                                    @Html.DropDownList("CatID", null, htmlAttributes: new { @class = "form-control" })
+                                    @Html.ValidationMessageFor(model => model.CatID, "", new { @class = "text-danger" })
+                                </div>
+                            </div>
+                            <div class="form-group col-6">
+                                <p class="control-label col-md-2">Ngày tạo</p>
+                                <div class="col-md-10">
+                                    @Html.TextBoxFor(model => model.DateCreated, new { @class = "form-control", type = "datetime-local", id = "dateCreated" })
+
+
+                                    @Html.ValidationMessageFor(model => model.DateCreated, "", new { @class = "text-danger" })
+                                </div>
+                            </div>
+
+
+                        </div>
+
+                        <div class="form-group">
+                            <p class="control-label col-md-2">Thumb</p>
+                            <div class="col-md-10">
+                                <img id="output" class="img-rounded" alt="thumb" width="100" src="~/Content/images/no-image.jpg" />
+                                <p><label for="ufile" style="cursor:pointer; font-weight:bold">Chọn file ảnh</label></p>
+                                <input name="ImageFile" id="ufile" type="file" style="display:none;" onchange="loadfile(event)" />
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <p class="control-label col-md-2">Active</p>
+                            <div class=" col-md-10">
+                                @Html.CheckBoxFor(model => model.Active)
+                                @Html.ValidationMessageFor(model => model.Active, "", new { @class = "text-danger" })
+
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <p class="control-label col-md-2">HomeFlag</p>
+                            <div class="col-md-10">
+                                @Html.CheckBoxFor(model => model.HomeFlag)
+                                @Html.ValidationMessageFor(model => model.HomeFlag, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <p class="control-label col-md-2">Best Seller</p>
+                            <div class="col-md-10">
+                                @Html.CheckBoxFor(model => model.BestSellers)
+                                @Html.ValidationMessageFor(model => model.BestSellers, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+            @*<div class="tab-pane fade" id="product-edit-option">
+                <div class="card">
+                    <div>
+                        @{Html.RenderPartial("_AddColorPartialView");}
+                    </div>
+
+
+                </div>
+            </div>*@
+        <div class="tab-pane fade" id="product-edit-description">
+            
+            <div class="card">
+
+                <div class="card-body">
+                    <div class="form-group">
+                        <p class="control-label col-md-2">Mô tả ngắn gọn</p>
+                        <div class="col-md-12">
+                            @Html.EditorFor(model => model.ShortDesc, new { htmlAttributes = new { @class = "form-control" } })
+                            @Html.ValidationMessageFor(model => model.UnitsInStock, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <p class="control-label col-md-2">Mô tả chi tiết</p>
+                        <div class="col-md-12">
+                            @Html.TextAreaFor(model => model.Description, new { @class = "form-control", style = "height: 100px;" })
+                            @Html.ValidationMessageFor(model => model.Description, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        </div>
+
+
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-10">
+                <input class="btn btn-success m-r-5" type="submit" value="Thêm và tiếp tục"  />
+                <a class="btn btn-danger m-r-5" href="@Url.Action("Index", "Products")" title="Back">Hủy</a>
+            </div>
+        </div> 
+    }
+
+
+
+    <!-- Core Vendors JS -->
+    <script src="~/assets/Admin_assets/js/vendors.min.js"></script>
+
+    <!-- page js -->
+    <script src="~/assets/Admin_assets/vendors/select2/select2.min.js"></script>
+    <script src="~/assets/Admin_assets/vendors/quill/quill.min.js"></script>
+    <script src="~/assets/Admin_assets/js/pages/e-commerce-product-edit.js"></script>
+
+    <!-- Core JS -->
+    <script src="~/assets/Admin_assets/js/app.min.js"></script>
+
+</body>
+
+
+@*@section Scripts {
+        @Scripts.Render("~/assets/Admin_assets/vendors/select2/select2.min.js")
+    }*@
+
+<style>
+
+
+</style>
+<script>
+    var loadfile = function (event) {
+        var image = document.getElementById('output');
+        image.src = URL.createObjectURL(event.target.files[0]);
+    };
+    document.addEventListener("DOMContentLoaded", function () {
+        // Lấy ngày và giờ hiện tại
+        var now = new Date();
+        var year = now.getFullYear();
+        var month = (now.getMonth() + 1).toString().padStart(2, '0');
+        var day = now.getDate().toString().padStart(2, '0');
+        var hours = now.getHours().toString().padStart(2, '0');
+        var minutes = now.getMinutes().toString().padStart(2, '0');
+
+        // Định dạng lại chuỗi ngày và giờ hiện tại
+        var formattedDate = `${year}-${month}-${day}T${hours}:${minutes}`;
+
+        // Đặt giá trị mặc định cho trường DateCreated
+        document.getElementById("dateCreated").value = formattedDate;
+    });
+
+
+
+</script>

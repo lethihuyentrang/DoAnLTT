@@ -1,0 +1,171 @@
+﻿@using QLBQA.Models
+@{
+    ViewBag.Title = "ViewOrder";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@{
+    var OrderToView = ViewBag.OrderToView;
+    var OrderDetails = ViewBag.OrderDetails;
+    var ProductDetails = ViewBag.ProductDetails;
+    var Colors = ViewBag.Colors;
+    var Sizes = ViewBag.Sizes;
+}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chi tiết đơn hàng</title>
+    <style>
+        h2{
+            padding-bottom:20px;
+            text-align:center;
+        }
+        .row {
+            margin: 20px 0;
+        }
+        body {
+
+            margin: 0;
+            padding: 0;
+        }
+
+        .container1 {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        table {
+
+            border-collapse: collapse;
+            width: 100%;
+        }
+
+        th, td {
+            border: 1px solid #dddddd;
+            text-align: left;
+            padding: 8px;
+        }
+
+        th {
+            background-color: #f2f2f2;
+        }
+
+        .status {
+            font-weight: bold;
+        }
+
+        .paid {
+            color: darkgreen;
+        }
+
+        .unpaid {
+            color: darkred;
+        }
+    </style>
+</head>
+<body>
+    <div class="container1">
+        <h2>Chi tiết đơn hàng</h2>
+        <div style="border:1px solid #808080; padding:12px">
+            <div class="order-info">
+                <div class="row">
+                    <div class="col-md-4">
+                        <p>Mã đơn hàng: #<span>@OrderToView.OrderID</span></p>
+                    </div>
+                    <div class="col-md-4">
+                        <p>Ngày tạo: <span>@OrderToView.OrderDate</span></p>
+                    </div>
+                    <div class="col-md-4">
+                        <p style="display: inline-block;">Thanh toán:</p>
+                        @if (OrderToView.Paid == true)
+                        {
+                            <p class="status paid" style="display: inline-block; margin-left: 5px;">Đã thanh toán</p>
+                        }
+                        else
+                        {
+                            <p class="status unpaid" style="display: inline-block; margin-left: 5px;">Chưa thanh toán</p>
+                        }
+                    </div>
+
+                </div>
+                <div class="row">
+                    <div class="col-md-4">
+                        <p>Địa chỉ: <span>@OrderToView.Customer.Address</span></p>
+                    </div>
+                    <div class="col-md-4">
+                        <p>Trạng thái: <span>@OrderToView.TransactStatus.Status</span></p>
+                    </div>
+                </div>
+            </div>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Tên sản phẩm</th>
+                        <th>Màu sắc</th>
+                        <th>Kích cỡ</th>
+                        <th>Số lượng</th>
+                        <th>Giá</th>
+                        <th>Tổng tiền</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @{
+                        int sum = 0;
+                    }
+                    @foreach (var item in OrderDetails)
+                    {
+                    <tr>
+                        @{ //sum += item.Total;
+                                            ProductDetail ProductDetail = null;
+                                            foreach (var p in ProductDetails)
+                                            {
+                                                if (p.ProductDetailID == item.ProductDetailID)
+                                                {
+                                                    ProductDetail = p;
+                                                }
+                                            } }
+                        <td class="product-name"><a class="get-product-id" href="@Url.Action("Details","Product", new { id = ProductDetail.Product.ProductID })">@ProductDetail.Product.ProductName</a></td>
+
+
+
+                        <td class="product_remove">
+                            <div color-id="@ProductDetail.ColorID" style="margin: auto; display: block; border-radius: 50%; width: 30px; height: 30px; background-color: @ProductDetail.Color.ColorCode"></div>
+
+                        </td>
+                        <td class="product_remove">
+                            <p size-id="@ProductDetail.SizeID">@ProductDetail.Size.SizeName</p>
+                        </td>
+                        <td>@item.Quantity</td>
+                        <td>
+                            @if (ProductDetail.Product.Discount > 0)
+                            {
+                    <span>@string.Format("{0:#,##0}", ProductDetail.Product.Discount) đ</span> }
+                                    else
+                                    {
+                    <span>@string.Format("{0:#,##0}", ProductDetail.Product.Price) đ</span>}
+                        </td>
+
+                        <td>
+                            @if (ProductDetail.Product.Discount > 0)
+                            {
+                    <span>@string.Format("{0:#,##0}", ProductDetail.Product.Discount * item.Quantity) đ</span> }
+                                    else
+                                    {
+                    <span>@string.Format("{0:#,##0}", ProductDetail.Product.Price * item.Quantity) đ</span>}
+                        </td>
+                    </tr>
+
+                            }
+
+                </tbody>
+            </table>
+            <div style="text-align:right; font-weight:bold; color: darkred; margin: 12px 0;">
+                Thành tiền: @string.Format("{0:#,##0}", OrderToView.Total) đ
+            </div>
+        </div>
+      
+    </div>
+</body>
+</html>

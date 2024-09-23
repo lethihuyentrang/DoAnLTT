@@ -1,0 +1,180 @@
+﻿@model IEnumerable<QLBQA.Models.Page>
+
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Areas/Admin/Views/Shared/_AdminLayout.cshtml";
+}
+
+
+<head>
+    <title>Quản lý page</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-ajax-unobtrusive/3.2.6/jquery.unobtrusive-ajax.min.js"></script>
+</head>
+
+<div class="page-header">
+    <div class="header-sub-title">
+        <nav class="breadcrumb breadcrumb-dash">
+            <a href="@Url.Action("Index", "Home", new { area = "Admin" })" class="breadcrumb-item"><i class="anticon anticon-home m-r-5"></i>Home</a>
+            <span class="breadcrumb-item active">Quản lý page</span>
+        </nav>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-body">
+
+
+
+        <p>
+
+            <a class="btn btn-secondary btn-tone m-r-5" href="@Url.Action("Create", "Pages")" title="Create">Thêm mới</a>
+
+        </p>
+
+        @* Thông bao lỗi *@
+        @if (TempData["ErrMsg"] != null)
+        {
+            ViewBag.ErrMsg = TempData["ErrMsg"].ToString();
+            TempData["ErrMsg"] = null;
+            <div id="alertMessage" class="alert alert-danger" role="alert">
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                <i class="anticon anticon-warning"></i>
+                @ViewBag.ErrMsg
+            </div>
+        }
+        <style>
+            #alertMessage {
+                transition: opacity 1s ease-in-out;
+            }
+        </style>
+        <script>
+            var disappearingDiv = document.getElementById("alertMessage");
+            function makeDisappear() {
+                disappearingDiv.style.opacity = 0;
+            }
+            setTimeout(makeDisappear, 5000);
+        </script>
+        @* End thông báo lỗi *@
+
+        <div id="accountTable" class="table-responsive">
+            <table class="table table-hover e-commerce-table">
+                <thead>
+                    <tr>
+
+                        <th>ID</th>
+                        <th>Tên page</th>
+                        <th>Hình minh họa</th>
+                        <th>Trạng thái</th>
+
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (Model != null)
+                    {
+                        foreach (var item in Model)
+                        {
+                            <tr>
+                                <td>
+                                    @item.PageID
+                                </td>
+                                <td>
+                                    @item.PageName
+                                </td>
+                                <td>
+                                    <img style="width:100px" src="~/Content/images/thumb_page_@item.Thumb" alt="Thumb">
+                                </td>
+                                <td>
+                                    @if (item.Published)
+                                    {
+                                        <div class="d-flex align-items-center">
+                                            <div class="badge badge-success badge-dot m-r-10"></div>
+                                            <div>Published</div>
+                                        </div>
+                                    }
+                                    else
+                                    {
+                                        <div class="d-flex align-items-center">
+                                            <div class="badge badge-danger badge-dot m-r-10"></div>
+                                            <div>Unpublished</div>
+                                        </div>
+                                    }
+
+                                </td>
+
+
+                                <td>
+                                    <a class="btn btn-primary btn-tone m-r-5" href="@Url.Action("Details", "Pages", new { id = item.PageID })" title="Details">Chi tiết</a>
+                                    <a class="btn btn-warning btn-tone m-r-5" href="@Url.Action("Edit", "Pages", new { id = item.PageID })" title="Edit">Sửa</a>
+                                    <a class="btn btn-danger btn-tone m-r-5" href="@Url.Action("Delete", "Pages", new { id = item.PageID })" title="Delete">Xóa</a>
+                                </td>
+                            </tr>
+                        }
+                    }
+
+
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+
+
+<script>
+   $(document).ready(function () {
+       $('#catSelect').change(function () {
+           var catId = $(this).val();
+           if (catId == "") {
+               $.ajax({
+                   url: '@Url.Action("SelectFollowingCat", "Products")',
+                   type: 'GET',
+                   data: { id: catId },
+                   success: function (data) {
+                       $('#accountTable tbody').html(data);
+                       var hidePages = document.getElementById("pages");
+                       hidePages.style.display = "block";
+                   },
+                   error: function () {
+                       alert('Đã xảy ra lỗi, vui lòng thử lại sau.');
+                   }
+               });
+           } else {
+                $.ajax({
+            url: '@Url.Action("SelectFollowingCat", "Products")',
+            type: 'GET',
+            data: { id: catId },
+            success: function (data) {
+                $('#accountTable tbody').html(data);
+                var hidePages = document.getElementById("pages");
+                hidePages.style.display = "none";
+            },
+            error: function () {
+                alert('Đã xảy ra lỗi, vui lòng thử lại sau.');
+            }
+        });
+           }
+
+    });
+});
+</script>
+
+@*@section Scripts {
+
+        <script src="~/assets/Admin_assets/summernote/summernote-bs4.js"></script>
+        <script>
+            jQuery(document).ready(function)(){
+                $('.summernote').summernote({
+                    fontNames: ['Arial', 'Arial Black', 'Comic Sans MS', 'Courier New'],
+                    styleTags: ['p', 'h1', 'h2', 'h3', 'h4', 'h5'],
+                    height: 200,
+                    minHeight: null,
+                    maxHeight: null,
+                    focus: true
+                });
+            }
+        </script>
+    }*@

@@ -1,0 +1,133 @@
+﻿@model QLBQA.Models.Image
+
+@{
+    ViewBag.Title = "Thêm ảnh";
+    Layout = "~/Areas/Admin/Views/Shared/_AdminLayout.cshtml";
+}
+
+<h2>Thêm ảnh</h2>
+
+
+
+@using (Html.BeginForm("Create2", "Images", FormMethod.Post, new { enctype = "multipart/form-data" }))
+{
+    @Html.AntiForgeryToken()
+
+    <div class="form-horizontal">
+        <hr />
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+        <div class="form-group">
+            <p class="control-label col-md-2">Chọn ảnh</p>
+            <div class="col-md-10">
+                <img id="output" class="img-rounded" alt="thumb" width="100" src="~/Content/images/no-image.jpg" />
+                @*<p><label for="ufile" style="cursor:pointer; font-weight:bold">Chọn file ảnh</label></p>
+                    <input name="ImageFile" id="ufile" type="file" style="display:none;" onchange="loadfile(event)" />*@
+                <input name="ImageFiles" id="ufile" type="file" onchange="loadfiles(event)" multiple />
+
+                @Html.ValidationMessageFor(model => model.Path, "", new { @class = "text-danger" })
+
+            </div>
+        </div>
+
+        <div class="form-group">
+            <p class="control-label col-md-2">Mô tả</p>
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.Description, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.Description, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            <p class="control-label col-md-2">Sản phẩm</p>
+            <div class="col-md-10">
+
+                @{
+                    var productId = Request.Form["ProductId"];
+                    var productName = Request.Form["ProductName"];
+
+
+                    var productList = new List<SelectListItem>
+                                    {
+                        new SelectListItem { Value = productId, Text = productName }
+                    };
+                }
+
+                @Html.DropDownList("ProductID", new List<SelectListItem>
+                  {
+                      new SelectListItem { Value = "", Text = "" }
+                  }, htmlAttributes: new { @class = "form-control", id = "productSelect" })
+                @Html.ValidationMessageFor(model => model.ProductID, "", new { @class = "text-danger" })
+
+                @Html.Hidden("ProductId", "", new { id = "ProductIdHidden" })
+                @Html.Hidden("ProductName", "", new { id = "ProductNameHidden" })
+
+            </div>
+        </div>
+
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-10">
+                <input class="btn btn-success m-r-5" type="submit" value="Thêm" />
+                <a id="cancelButton" class="btn btn-danger m-r-5" href="@Url.Action("CancelCreate", "Images")" title="Back">Hủy</a>
+            </div>
+        </div>
+    </div>
+}
+
+
+
+@*<script>
+        var loadfile = function (event) {
+            var image = document.getElementById('output');
+            image.src = URL.createObjectURL(event.target.files[0]);
+        };
+    </script>*@
+
+<script>
+    var loadfiles = function (event) {
+        var images = document.getElementById('output');
+        images.innerHTML = '';
+        for (var i = 0; i < event.target.files.length; i++) {
+            var image = document.createElement('img');
+            image.className = 'img-rounded';
+            image.width = 100;
+            image.src = URL.createObjectURL(event.target.files[i]);
+            images.appendChild(image);
+        }
+    };
+
+    window.onload = function () {
+        // Lấy giá trị từ Local Storage khi trang được tải
+        var productId = localStorage.getItem("productId");
+        var productName = localStorage.getItem("productName");
+
+        console.log(productName);
+
+        var options = [
+            { value: productId, text: productName }
+        ];
+
+        var dropdown = document.getElementById("productSelect");
+        options.forEach(function (option) {
+            var optionElement = document.createElement("option");
+            optionElement.value = option.value;
+            optionElement.text = option.text;
+            optionElement.selected = true;
+            dropdown.appendChild(optionElement);
+        });
+       
+         var cancelButton = document.getElementById("cancelButton");
+         cancelButton.href = "@Url.Action("CancelCreate", "Images")" + "?id=" + productId;
+    };
+    // JavaScript code to update the "Hủy" link with ProductID
+@*window.onload = function () {
+    // Lấy giá trị ProductID từ dropdown khi trang được tải
+    var productId = localStorage.getItem("productId");
+
+    // Cập nhật URL của liên kết "Hủy" với ProductID
+    var cancelButton = document.getElementById("cancelButton");
+    cancelButton.href = "@Url.Action("CancelCreate", "Images")" + "?id=" + productId;
+};*@
+
+
+
+</script>

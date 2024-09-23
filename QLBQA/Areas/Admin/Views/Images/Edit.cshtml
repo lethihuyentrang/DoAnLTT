@@ -1,0 +1,156 @@
+﻿@model List<QLBQA.Models.Image>
+
+@{
+    ViewBag.Title = "Chỉnh sửa hình ảnh";
+    Layout = "~/Areas/Admin/Views/Shared/_AdminLayout.cshtml";
+}
+
+<h2>Chỉnh sửa hình ảnh</h2>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<a id="goToCreateBtn" class="btn btn-success m-r-5" href="@Url.Action("Create2", "Images")" title="Add">Thêm mới</a>
+
+@using (Html.BeginForm("Edit", "Images", FormMethod.Post, new { id = "editForm" }))
+{
+    @Html.AntiForgeryToken()
+
+<table class="table">
+    <tr>
+        <th>Sản phẩm</th>
+        <th>Hình ảnh</th>
+        <th>Sửa hình ảnh</th>
+        <th>Mô tả</th>
+
+    </tr>
+    @Html.Hidden("Id", TempData["ProductId"])
+    @Html.Hidden("Name", TempData["ProductName"])
+    @for (int i = 0; i < Model.Count; i++)
+    {
+        <tr>
+
+            <td>@Html.DisplayFor(modelItem => Model[i].Product.ProductName)</td>
+            <td><img id="output_@i" class="img-rounded" alt="thumb" width="100" src="~/Content/images/@Model[i].Path" /></td>
+            <td>
+
+                <p><label for="ufile_@i" style="cursor:pointer; font-weight:bold">Chọn ảnh mới</label></p>
+                <input name="ImageFile" id="ufile_@i" type="file" style="display:none;" onchange="loadfile(event, @i)" data-index="@i" />
+
+            </td>
+            <td>
+
+
+                <input type="hidden" id="path_@i" value="@Model[i].Path" />
+                <input type="hidden" id="productName_@i" value="@Model[i].Product.ProductName" />
+                <input type="hidden" id="productId_@i" value="@Model[i].Product.ProductID" />
+                <input type="hidden" id="imageId_@i" value="@Model[i].ImageID" />
+                <textarea id="description_@i" value="@Model[i].Description"></textarea>
+
+            </td>
+            <td>
+                <a class="btn btn-warning m-r-5" href="@Url.Action("Delete", "Images", new { id = Model[i].ImageID })" title="Delete">Xóa</a>
+            </td>
+        </tr>
+    }
+</table>
+    <div class="form-group">
+        <div class="col-md-offset-2 col-md-10">
+            <input id="saveButton" class="btn btn-success m-r-5" type="submit" value="Lưu và tiếp tục" class="btn btn-default" />
+            <a class="btn btn-danger m-r-5" href="@Url.Action("Index", "Products")" title="Back">Hủy</a>
+        </div>
+    </div>
+}
+
+
+<script>
+    const fileNames = []; // Mảng để lưu các tên file đã chọn
+
+    var loadfile = function (event, i) {
+        var index = event.target.getAttribute('data-index');
+        var image = document.querySelector('#output_' + index);
+        image.src = URL.createObjectURL(event.target.files[0]);
+        const files = event.target.files; // Lấy danh sách các tệp đã chọn
+
+        // Lặp qua từng tệp đã chọn và lấy tên của chúng
+        for (let i = 0; i < files.length; i++) {
+            fileNames[index] = files[i].name; // Thêm tên của tệp vào mảng fileNames
+        }
+
+        // Hiển thị tên các tệp đã chọn
+        console.log("Tên các tệp đã tải lên:", fileNames);
+    };
+
+    $(document).ready(function () {
+        $("#editForm").submit(function (event) {
+            event.preventDefault();
+
+            var Images = [];
+
+            $("#editForm table tr:gt(0)").each(function () {
+
+                var index = $(this).find('input[type="file"]').attr('data-index'); // Lấy giá trị của data-index
+                var productId = parseInt($(this).find('input[id^="productId_"]').val());
+                var description = $(this).find('textarea[id^="description_"]').val();
+                if (fileNames[index] == null) {
+                    path = $(this).find('input[id^="path_"]').val();
+                } else {
+                    var path = fileNames[index];
+                }
+                var imageId = parseInt($(this).find('input[id^="imageId_"]').val());
+
+                var image = {
+                    ImageID: imageId,
+                    Path: path,
+                    Description: description,
+                    ProductID: productId
+                };
+
+                Images.push(image);
+            });
+
+            // Tạo một formData và thêm dữ liệu của Images vào đó
+            var formData = new FormData();
+            formData.append('__RequestVerificationToken', $('input[name="__RequestVerificationToken"]').val());
+
+            // Thêm thông tin của từng hình ảnh vào formData
+            for (var i = 0; i < Images.length; i++) {
+                formData.append('Images[' + i + '].ImageID', Images[i].ImageID);
+                formData.append('Images[' + i + '].Path', Images[i].Path);
+                formData.append('Images[' + i + '].Description', Images[i].Description);
+                formData.append('Images[' + i + '].ProductID', Images[i].ProductID);
+            }
+            var pID = '@TempData["ProductId"]';
+            console.log(Images);
+            console.log(pID);
+            if (Images.length == 0) {
+                     window.location.href = '@Url.Action("Edit2", "ProductDetails")' + '?id=' + pID;
+            }        else {
+                  $.ajax({
+                url: '@Url.Action("Edit", "Images")',
+                type: 'POST',
+                data: formData,
+                processData: false, 
+                contentType: false, 
+                success: function (result) {
+                    console.log("Chỉnh sửa thành công");
+                     window.location.href = '@Url.Action("Edit2", "ProductDetails")' + '?id=' + pID;
+                },
+                error: function (xhr, status, error) {
+                    console.error("Lỗi khi chỉnh sửa: " + error);
+                    // Xử lý lỗi nếu cần
+                }
+            });
+            }
+            // Sử dụng AJAX để gửi formData lên server
+
+        });
+    });
+
+    // Lưu giá trị vào Local Storage khi click vào nút chuyển qua form Create
+    $("#goToCreateBtn").click(function () {
+        // Lấy giá trị của productId và productName từ các thẻ HTML
+         var productId = $("#Id").val();
+    var productName = $("#Name").val();
+    localStorage.setItem("productId", productId);
+    localStorage.setItem("productName", productName);
+    });
+   
+</script>

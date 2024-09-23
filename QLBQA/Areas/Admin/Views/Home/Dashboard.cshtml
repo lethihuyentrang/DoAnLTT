@@ -1,0 +1,42 @@
+﻿@model QLBQA.Models.Customer
+@{
+    ViewBag.Title = "Dashboard";
+    Layout = "~/Areas/Admin/Views/Shared/_AdminLayout.cshtml";
+}
+<div class="page-header">
+    <div class="header-sub-title">
+        <nav class="breadcrumb breadcrumb-dash">
+            <a href="@Url.Action("Index", "Home", new { area = "Admin" })" class="breadcrumb-item"><i class="anticon anticon-home m-r-5"></i>Home</a>
+            <span class="breadcrumb-item active">Dashboard</span>
+        </nav>
+    </div>
+</div>
+
+<main class="main-content">
+
+    <div class="account-page-area section-space-y-axis-100">
+        <div class="container">
+            <div class="row">
+ 
+                <div>
+                    <div class="tab-content myaccount-tab-content" id="account-page-tab-content">
+                        <div class="tab-pane fade show active" id="account-dashboard" role="tabpanel" aria-labelledby="account-dashboard-tab">
+                            <div class="myaccount-dashboard">
+                                <p>
+                                    Xin chào <b>@Model.FullName</b> (<a href="@Url.Action("Logout","Accounts", new { area = "" })">
+                                        Đăng xuất
+                                    </a>)
+                                </p>
+                                <p>
+                                    Bạn có thể bắt đầu quản lý hệ thống.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+<script></script>
+

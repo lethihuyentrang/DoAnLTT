@@ -1,0 +1,56 @@
+﻿@model QLBQA.Models.Page
+
+@{
+    ViewBag.Title = "Xóa page";
+    Layout = "~/Areas/Admin/Views/Shared/_AdminLayout.cshtml";
+}
+
+@{
+    var thumbPath = "~/Content/images/thumb_page_" + Model.Thumb;
+}
+<div class="form-group">
+
+    <h3>Bạn có chắc muốn xóa page này?</h3>
+    <div>
+        <hr />
+        <dl class="dl-horizontal">
+            <div class="form-group">
+                <p class="control-label col-md-2">Tên page</p>
+                <div class="col-md-10">
+                    @Html.DisplayFor(model => model.PageName)
+                </div>
+            </div>
+
+            <div class="form-group">
+                <p class="control-label col-md-2">Thumb</p>
+                <div class="col-md-10">
+                    <img id="output" class="img-rounded" alt="thumb" width="100" src="@Url.Content(@thumbPath)" />
+                </div>
+            </div>
+
+            <div class="form-group">
+                <p class="control-label col-md-2"> Ngày tạo</p>
+                <div class="col-md-10">
+                    @Html.DisplayFor(model => model.CreateDate)
+                </div>
+            </div>
+            <div class="form-group">
+                <p class="control-label col-md-2"> Ordering</p>
+                <div class="col-md-10">
+                    @Html.DisplayFor(model => model.Ordering)
+                </div>
+            </div>
+          
+        </dl>
+
+        @using (Html.BeginForm())
+        {
+            @Html.AntiForgeryToken()
+
+            <div class="form-actions no-color">
+                <input class="btn btn-primary m-r-5" type="submit" value="Xóa" />
+                <a class="btn btn-danger m-r-5" href="@Url.Action("Index", "Pages")" title="Back">Hủy</a>
+            </div>
+        }
+    </div>
+</div>

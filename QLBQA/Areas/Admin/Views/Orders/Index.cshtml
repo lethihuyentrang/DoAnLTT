@@ -1,0 +1,159 @@
+﻿@model PagedList.IPagedList<QLBQA.Models.Order>
+@using PagedList.Mvc;
+<link href="~/Content/PagedList.css" rel="stylesheet" type="text/css" />
+@{ ViewBag.Title = "Index";
+    Layout = "~/Areas/Admin/Views/Shared/_AdminLayout.cshtml"; }
+<head>
+    <title>Danh sách đơn hàng</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-ajax-unobtrusive/3.2.6/jquery.unobtrusive-ajax.min.js"></script>
+</head>
+
+<div class="page-header">
+    <div class="header-sub-title">
+        <nav class="breadcrumb breadcrumb-dash">
+            <a href="@Url.Action("Index", "Home", new { area = "Admin" })" class="breadcrumb-item"><i class="anticon anticon-home m-r-5"></i>Home</a>
+            <span class="breadcrumb-item active">Quản lý đơn hàng</span>
+        </nav>
+    </div>
+</div>
+<div class="card">
+    <div class="card-body">
+
+
+        <div class="d-md-flex">
+
+            <div class="ml-auto m-b-10">
+                @using (Html.BeginForm())
+                {
+    <p style="display: inline-block; float: right;">
+        @Html.TextBox("SearchString", ViewBag.CurrentFilter as string, new { placeholder = "Nhập tên khách hàng...", style = "padding: 5px;" })
+        <input class="btn btn-primary" type="submit" value="Tìm">
+    </p>}
+
+            </div>
+        </div>
+
+
+
+        @* Thông bao lỗi *@
+        @if (TempData["ErrMsg"] != null)
+        {
+            ViewBag.ErrMsg = TempData["ErrMsg"].ToString();
+            TempData["ErrMsg"] = null;
+<div id="alertMessage" class="alert alert-danger" role="alert">
+    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+    </button>
+    <i class="anticon anticon-warning"></i>
+    @ViewBag.ErrMsg
+</div>}
+        <style>
+            #alertMessage {
+                transition: opacity 1s ease-in-out;
+            }
+        </style>
+        <script>
+            var disappearingDiv = document.getElementById("alertMessage");
+            function makeDisappear() {
+                disappearingDiv.style.opacity = 0;
+            }
+            setTimeout(makeDisappear, 5000);
+        </script>
+        @* End thông báo lỗi *@
+        <div id="accountTable" class="table-responsive">
+            <table class="table table-hover e-commerce-table">
+                <thead>
+                    <tr>
+
+                        <th>ID</th>
+                        <th>Khách hàng</th>
+                        <th>Ngày tạo</th>
+                        <th>Thành tiền</th>
+                        <th>Trạng thái</th>
+                        <th>Thanh toán</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (Model != null)
+                    {
+                        foreach (var item in Model)
+                        {
+        <tr>
+            <td>
+                @item.OrderID
+            </td>
+            <td>
+                <div class="d-flex align-items-center">
+                    <img class="img-fluid rounded" src="assets/images/others/thumb-9.jpg" style="max-width: 60px" alt="">
+                    <h6 class="m-b-0 m-l-10">@item.Customer.FullName</h6>
+                </div>
+            </td>
+            <td>@item.OrderDate</td>
+            <td>@item.Total</td>
+            @*<td>@item.LastLogin</td>*@
+            @if (item.TransactStatusID == 1)
+            {
+<td style="color:orange">Đang xử lý</td> }
+                    else if (item.TransactStatusID == 2)
+                    {
+<td style="color:darkturquoise">Đang vận chuyển</td> }
+                    else if (item.TransactStatusID == 3)
+                    {
+<td style="color:darkgreen">Đã giao hàng</td>}
+        <td>
+            @if (item.Paid != null)
+            {
+                if ((bool)item.Paid)
+                {
+        <div class="d-flex align-items-center">
+            <div class="badge badge-success badge-dot m-r-10"></div>
+            <div>Đã thanh toán</div>
+        </div> }
+                                else
+                                {
+        <div class="d-flex align-items-center">
+            <div class="badge badge-danger badge-dot m-r-10"></div>
+            <div>Chưa thanh toán</div>
+        </div>}
+                            }
+        </td>
+
+            <td>
+                <a class="btn btn-primary btn-tone m-r-5" href="@Url.Action("Details", "Orders", new { id = item.OrderID })" title="Details">Chi tiết</a>
+            </td>
+        </tr>
+}
+}
+
+
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+<div id="pages">
+    <div id="pages">
+        @Html.PagedListPager(Model,
+                  page => Url.Action("Index", "Orders", new { page, currentFilter = ViewBag.CurrentFilter }),
+                 new PagedListRenderOptions
+                 {
+                     DisplayLinkToFirstPage = PagedListDisplayMode.Always, // Hiển thị liên kết đến trang đầu tiên
+            DisplayLinkToLastPage = PagedListDisplayMode.Always, // Hiển thị liên kết đến trang cuối cùng
+            MaximumPageNumbersToDisplay = 5, // Số lượng trang tối đa để hiển thị
+            EllipsesFormat = "&#8230;", // Định dạng dấu ...
+            LinkToPreviousPageFormat = "<",
+                     LinkToNextPageFormat = ">",
+                     LinkToFirstPageFormat = "<<", // Định dạng liên kết đến trang đầu tiên
+            LinkToLastPageFormat = ">>", // Định dạng liên kết đến trang cuối cùng
+        })
+    </div>
+
+</div>
+<style>
+    #pages {
+        display: flex;
+        justify-content: center;
+    }
+</style>

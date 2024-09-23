@@ -1,0 +1,39 @@
+﻿@model List<QLBQA.Models.Account>
+
+@foreach (var item in Model)
+{
+    <tr>
+        <td>@item.AccountID</td>
+        <td>
+            <div class="d-flex align-items-center">
+                <img class="img-fluid rounded" src="assets/images/others/thumb-9.jpg" style="max-width: 60px" alt="">
+                <h6 class="m-b-0 m-l-10">@item.FullName</h6>
+            </div>
+        </td>
+        <td>@item.Email</td>
+        <td>@item.Phone</td>
+        <td>@item.Role.RoleName</td>
+        <td>
+            @if (item.Active)
+            {
+                <div class="d-flex align-items-center">
+                    <div class="badge badge-success badge-dot m-r-10"></div>
+                    <div>Active</div>
+                </div>
+            }
+            else
+            {
+                <div class="d-flex align-items-center">
+                    <div class="badge badge-success badge-dot m-r-10"></div>
+                    <div>Block</div>
+                </div>
+            }
+        </td>
+        <td>
+            <a class="btn btn-primary btn-tone m-r-5" href="@Url.Action("Details", "Accounts", new { id = item.AccountID })" title="Details">Chi tiết</a>
+            <a class="btn btn-warning btn-tone m-r-5" href="@Url.Action("Edit", "Accounts", new { id = item.AccountID })" title="Edit">Sửa</a>
+            <a class="btn btn-danger btn-tone m-r-5" href="@Url.Action("Delete", "Accounts", new { id = item.AccountID })" title="Delete">Xóa</a>
+        </td>
+    </tr>
+}
+

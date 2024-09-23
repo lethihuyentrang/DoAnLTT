@@ -1,0 +1,222 @@
+﻿@model QLBQA.Models.Order
+@using QLBQA.Models
+@{
+    ViewBag.Title = "Details";
+    Layout = "~/Areas/Admin/Views/Shared/_AdminLayout.cshtml";
+}
+@{ var OrderToView = ViewBag.OrderToView;
+    var OrderDetails = ViewBag.OrderDetails;
+    var ProductDetails = ViewBag.ProductDetails;
+    var Colors = ViewBag.Colors;
+    var Sizes = ViewBag.Sizes; }
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chi tiết đơn hàng</title>
+    <style>
+        h2 {
+            padding-bottom: 20px;
+            text-align: center;
+        }
+
+        .row {
+            margin: 20px 0;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+        }
+
+        .container1 {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        table {
+            border-collapse: collapse;
+            width: 100%;
+        }
+
+        th, td {
+            border: 1px solid #dddddd;
+            text-align: left;
+            padding: 8px;
+        }
+
+        th {
+            background-color: #f2f2f2;
+        }
+
+        .status {
+            font-weight: bold;
+        }
+
+        .paid {
+            color: darkgreen;
+        }
+
+        .unpaid {
+            color: darkred;
+        }
+    </style>
+</head>
+<body>
+    <div class="container1">
+        <h2>Chi tiết đơn hàng</h2>
+        <div style="border:1px solid #808080; padding:12px">
+            <div class="order-info">
+                <div class="row">
+                    <div class="col-md-4">
+                        <p>Mã đơn hàng: #<span>@Model.OrderID</span></p>
+                    </div>
+                    <div class="col-md-4">
+                        <p>Ngày tạo: <span>@Model.OrderDate</span></p>
+                    </div>
+                    <div class="col-md-4">
+                        <p style="display:inline-block; width:120px;">Thanh toán:</p>
+                        @if (Model.Paid == true)
+                        {
+                            <select class="form-control short-select" id="paid">
+                                <option value="0">Chưa thanh toán</option>
+                                <option selected value="1">Đã thanh toán</option>
+                            </select>
+                        }
+                        else
+                        {
+                            <select class="form-control short-select" id="paid">
+                                <option selected value="0">Chưa thanh toán</option>
+                                <option value="1">Đã thanh toán</option>
+                            </select>}
+                    </div>
+
+                </div>
+                <div class="row">
+                    <div class="col-md-4">
+                        <p>Khách hàng: <span>@Model.Customer.FullName</span></p>
+                    </div>
+                    <div class="col-md-4">
+                        <p>Địa chỉ: <span>@Model.Customer.Address</span></p>
+                    </div>
+                    <div class="col-md-4">
+                        <p style="display:inline-block; width:120px;">Trạng thái: </p>
+                        @Html.DropDownList("TransactStatusID", ViewBag.TransactStatus as SelectList, new { @class = "form-control short-select", id = "transact" })
+
+                    </div>
+                </div>
+            </div>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Tên sản phẩm</th>
+                        <th>Màu sắc</th>
+                        <th>Kích cỡ</th>
+                        <th>Số lượng</th>
+                        <th>Giá</th>
+                        <th>Tổng tiền</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @Html.HiddenFor(OrderID => Model.OrderID)
+                    @foreach (var item in OrderDetails)
+                    {
+                        <tr>
+                            @{ //sum += item.Total;
+                                ProductDetail ProductDetail = null;
+                                foreach (var p in ProductDetails)
+                                {
+                                    if (p.ProductDetailID == item.ProductDetailID)
+                                    {
+                                        ProductDetail = p;
+                                    }
+                                } }
+                            <td class="product-name">@ProductDetail.Product.ProductName</td>
+
+
+
+                            <td class="product_remove">
+                                <div color-id="@ProductDetail.ColorID" style="margin: auto; display: block; border-radius: 50%; width: 30px; height: 30px; background-color: @ProductDetail.Color.ColorCode"></div>
+
+                            </td>
+                            <td class="product_remove">
+                                <p size-id="@ProductDetail.SizeID">@ProductDetail.Size.SizeName</p>
+                            </td>
+                            <td>@item.Quantity</td>
+                            <td>
+                                @if (ProductDetail.Product.Discount > 0)
+                                {
+                                    <span>@string.Format("{0:#,##0}", ProductDetail.Product.Discount) đ</span> }
+                                else
+                                {
+                                    <span>@string.Format("{0:#,##0}", ProductDetail.Product.Price) đ</span>}
+                            </td>
+
+                            <td>
+                                @if (ProductDetail.Product.Discount > 0)
+                                {
+                                    <span>@string.Format("{0:#,##0}", ProductDetail.Product.Discount * item.Quantity) đ</span> }
+                                else
+                                {
+                                    <span>@string.Format("{0:#,##0}", ProductDetail.Product.Price * item.Quantity) đ</span>}
+                            </td>
+                        </tr>
+                    }
+
+                </tbody>
+            </table>
+            <div style="text-align:right; font-weight:bold; color: darkred; margin: 12px 0;">
+                Thành tiền: @string.Format("{0:#,##0}", Model.Total) đ
+            </div>
+        </div>
+        <p style="margin-top:20px">
+            <a class="btn btn-info m-r-5" href="@Url.Action("Index", "Orders")" title="Back">Trở về</a>
+        </p>
+    </div>
+
+</body>
+</html>
+<style>
+    .short-select {
+        display: inline;
+        width: 200px;
+    }
+</style>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script>
+    $(document).ready(function () {
+        // Bắt sự kiện thay đổi trên thẻ select
+        $('.short-select').change(function () {
+            // Lấy giá trị của thẻ select
+            
+
+            var paidValue = $('#paid').val();
+            var transactStatusValue = $('#transact').val();
+            var selectedValues = [0, 0];
+            selectedValues[0] = paidValue;
+            selectedValues[1] = transactStatusValue;
+            var a = [1, 2];
+            console.log(selectedValues);
+            // Lấy ID của đơn hàng (OrderID) để gửi cùng với giá trị select
+            var orderID = $('#OrderID').val();
+
+            // Gửi dữ liệu đến controller thông qua AJAX
+            $.ajax({
+                url: '@Url.Action("UpdateStatus", "Orders")',
+                type: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify({ orderID: orderID, status: selectedValues}),
+                success: function (response) {
+                  
+                },
+                error: function (xhr, status, error) {
+                    
+                }
+            });
+        });
+    });
+</script>
+

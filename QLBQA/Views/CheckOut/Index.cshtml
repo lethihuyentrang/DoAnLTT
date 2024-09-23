@@ -1,0 +1,394 @@
+﻿@model QLBQA.Models.CheckOut
+@using QLBQA.Models
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@{
+    var CountCart = Session["CountCart"];
+    List<CartItem> CartItems = ViewBag.GioHang as List<CartItem>;
+    var CustomerID = Session["CustomerId"];
+    var Email = Model.Email as string;
+}
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/js/bootstrap.bundle.min.js" integrity="sha384-gtEjrD/SeCtmISkJkNUaaKMoLD0//ElJ19smozuHV6z3Iehds+3Ulb9Bn9Plx0x4" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.21.1/axios.min.js"></script>
+
+<main class="main-content">
+
+    <div class="checkout-area section-space-y-axis-100">
+        <div class="container">
+            <div class="row">
+                <div class="col-12">
+                    @*<div class="coupon-accordion">
+                            <h3>Returning customer? <span id="showlogin">Click here to login</span></h3>
+                            <div id="checkout-login" class="coupon-content">
+                                <div class="coupon-info">
+                                    <p class="coupon-text mb-1">
+                                        Quisque gravida turpis sit amet nulla posuere lacinia. Cras sed est
+                                        sit amet ipsum luctus.
+                                    </p>
+                                    <form action="javascript:void(0)">
+                                        <p class="form-row-first">
+                                            <label class="mb-1">Username or email <span class="required">*</span></label>
+                                            <input type="text">
+                                        </p>
+                                        <p class="form-row-last">
+                                            <label>Password <span class="required">*</span></label>
+                                            <input type="text">
+                                        </p>
+                                        <p class="form-row">
+                                            <input type="checkbox" id="remember_me">
+                                            <label for="remember_me">Remember me</label>
+                                        </p>
+                                        <p class="lost-password"><a href="javascript:void(0)">Lost your password?</a></p>
+                                    </form>
+                                </div>
+                            </div>
+                            <h3>Have a coupon? <span id="showcoupon">Click here to enter your code</span></h3>
+                            <div id="checkout_coupon" class="coupon-checkout-content">
+                                <div class="coupon-info">
+                                    <form action="javascript:void(0)">
+                                        <p class="checkout-coupon">
+                                            <input placeholder="Coupon code" type="text">
+                                            <input class="coupon-inner_btn" value="Apply Coupon" type="submit">
+                                        </p>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>*@
+                </div>
+            </div>
+            <div class="row">
+
+                <div class="col-lg-6 col-12">
+
+                    <div class="checkbox-form">
+                        <h3>Thông tin mua hàng</h3>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="checkout-form-list">
+                                    <label>Họ và tên <span class="required">*</span></label>
+                                    <input id="fullname" placeholder="" type="text" value="@Model.FullName">
+                                </div>
+                            </div>
+
+                            <div class="col-md-12">
+                                <div class="checkout-form-list">
+                                    <label>Số điện thoại<span class="required">*</span></label>
+                                    <input id="phone" placeholder="" type="text" value="@Model.Phone">
+                                </div>
+                            </div>
+                            <div class="col-md-12">
+                                <div class="checkout-form-list">
+                                    <label>Địa chỉ nhận hàng <span class="required">*</span></label>
+                                    <input id="address" placeholder="Street address" type="text" value="@Model.Address">
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="checkout-form-list">
+                                    <select class="form-select form-select-sm mb-3" id="city" aria-label=".form-select-sm">
+                                        <option value="">Chọn tỉnh thành</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="checkout-form-list">
+                                    <select class="form-select form-select-sm mb-3" id="district" aria-label=".form-select-sm">
+                                        <option value="">Chọn quận huyện</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="checkout-form-list">
+
+                                    <select class="form-select form-select-sm" id="ward" aria-label=".form-select-sm">
+                                        <option value="">Chọn phường xã</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+                <div class="col-lg-6 col-12">
+                    @using (Html.BeginForm(new { id = "PayForm" }))
+                    {
+
+
+                        <div class="your-order">
+                            <h3>Đơn hàng của bạn</h3>
+                            <div class="your-order-table table-responsive">
+                                <table class="table">
+                                    <thead>
+                                        <tr>
+                                            <th class="cart-product-name">Product</th>
+                                            <th class="cart-product-total">Total</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @if (Session["CustomerId"] != null)
+                                        {
+                                            foreach (var item in CartItems)
+                                            {
+                                                <tr class="cart_item">
+                                                    <td class="cart-product-name">
+                                                        @item.productDetail.Product.ProductName<strong class="product-quantity">
+                                                            × @item.amount
+                                                        </strong>
+                                                    </td>
+                                                    <td class="cart-product-total"><span class="amount">@string.Format("{0:#,##0}", item.TotalMoney()) đ</span></td>
+                                                </tr>
+                                            }
+                                        }
+
+                                    </tbody>
+                                    <tfoot>
+
+                                        <tr class="order-total">
+                                            <th>Thành tiền</th>
+                                            <td><strong><span id="total-money" class="amount">@string.Format("{0:#,##0}", CartItems.Sum(x => x.TotalMoney())) đ</span></strong></td>
+                                        </tr>
+                                    </tfoot>
+                                </table>
+                            </div>
+                            <div class="payment-method">
+                                <div class="payment-accordion">
+                                    <div class="radio-container">
+                                        <div class="radio">
+                                            <input name="Payment-Type" type="radio" id="COD-Type" checked />
+                                            <label for="COD-Type">Thanh toán khi nhận hàng (COD)</label>
+                                        </div>
+                                        <div class="radio">
+                                            <input name="Payment-Type" type="radio" id="VNpay-Type" />
+                                            <label for="VNpay-Type">Thanh toán bằng VNpay</label>
+                                        </div>
+                                    </div>
+
+
+                                    @*<input name="Payment-Type" type="radio" id="COD-Type"/> <label for="COD-Type">"Thanh toán khi nhận hàng(COD)"</label><br />
+                        <input name="Payment-Type" type="radio" id="MoMo-Type"/> <label for="MoMo-Type">"Thanh toán bằng MoMo"</label>*@
+
+                                    <div class="order-button-payment">
+                                        <input id="btnThanhToan" value="Thanh toán" type="button">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+
+
+                    }
+                </div>
+                </div>
+        </div>
+    </div>
+</main>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.21.1/axios.min.js"></script>
+<script>
+    var citis = document.getElementById("city");
+    var districts = document.getElementById("district");
+    var wards = document.getElementById("ward");
+    var Parameter = {
+        url: "https://raw.githubusercontent.com/kenzouno1/DiaGioiHanhChinhVN/master/data.json",
+        method: "GET",
+        responseType: "json",
+    };
+
+    var promise = axios(Parameter);
+    promise.then(function (result) {
+        renderCity(result.data);
+    });
+
+    function renderCity(data) {
+        for (const x of data) {
+            citis.options[citis.options.length] = new Option(x.Name, x.Id);
+        }
+        citis.onchange = function () {
+            district.length = 1;
+            ward.length = 1;
+            if (this.value != "") {
+                const result = data.filter(n => n.Id === this.value);
+
+                for (const k of result[0].Districts) {
+                    district.options[district.options.length] = new Option(k.Name, k.Id);
+                }
+            }
+        };
+        district.onchange = function () {
+            ward.length = 1;
+            const dataCity = data.filter((n) => n.Id === citis.value);
+            if (this.value != "") {
+                const dataWards = dataCity[0].Districts.filter(n => n.Id === this.value)[0].Wards;
+
+                for (const w of dataWards) {
+                    wards.options[wards.options.length] = new Option(w.Name, w.Id);
+                }
+            }
+        };
+    }
+   
+</script>
+
+
+    <script>
+    // Đợi cho trang được tải hoàn toàn
+    document.addEventListener("DOMContentLoaded", function() {
+     var selectElement = document.getElementById("city");
+
+    // Lặp qua các option để tìm option cần được chọn mặc định
+    for (var i = 0; i < selectElement.options.length; i++) {
+      if (selectElement.options[i].value === "02") {
+        // Thiết lập option này là được chọn mặc định
+        selectElement.options[i].selected = true;
+        break; // Thoát khỏi vòng lặp sau khi đã tìm thấy option cần chọn
+      }
+    }
+    });
+
+    </script>
+ 
+
+
+<style>
+    .radio-container {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .radio {
+        margin-bottom: 10px;
+    }
+
+        .radio input[type="radio"] {
+            display: none; /* Ẩn radio button mặc định */
+        }
+
+            .radio input[type="radio"] + label:before {
+                content: "";
+                display: inline-block;
+                width: 20px;
+                height: 20px;
+                margin-right: 10px;
+                border: 2px solid #333; /* Màu viền */
+                border-radius: 50%; /* Làm tròn */
+                margin-bottom: -4px;
+            }
+
+            .radio input[type="radio"]:checked + label:before {
+                background-color: #333; /* Màu nền khi đã chọn */
+            }
+
+        .radio label {
+            cursor: pointer;
+        }
+</style>
+<script>
+  $(document).ready(function () {
+    $("#btnThanhToan").click(function () {
+        // Lấy thông tin từ các trường input
+        var fullName = $("#fullname").val();       
+        var phone = $("#phone").val();
+        var address = $("#address").val();
+        var city = $("#city").val();
+        var district = $("#district").val();
+        var ward = $("#ward").val();
+        var customerId = '@Session["CustomerId"]';
+        var email = '@Model.Email';
+        var totalmoney = @CartItems.Sum(x => x.TotalMoney());
+        var paymentType = $("input[name='Payment-Type']:checked").attr("id");
+        var paymentId = (paymentType === "VNpay-Type") ? 2 : 1;
+
+        if (fullName === '' || phone === '' || address === '' || city === '' || district === '' || ward === '') {
+            // Hiển thị thông báo lỗi
+            alert("Vui lòng điền đầy đủ thông tin thanh toán.");
+            return; // Dừng việc thực hiện tiếp theo nếu có trường rỗng
+        }
+        // Tạo đối tượng chứa thông tin cần gửi
+        var data = {
+            CustomerId: customerId,
+            FullName: fullName,
+            Email: email,
+            Phone: phone,
+            Address: address,
+            TinhThanh: city,
+            QuanHuyen: district,
+            PhuongXa: ward,
+            TotalMoney: totalmoney,
+            PaymentID: paymentId,
+            Note: ""
+        };
+
+        // Gửi request ajax
+        $.ajax({
+            url: (paymentType === "VNpay-Type") ? '@Url.Action("Checkout", "CheckOut")' : '@Url.Action("CODPayment", "CheckOut")',
+            type: 'POST',
+            data: data,
+            success: function (response) {
+                // Extract the redirect URL from the response
+                var redirectUrl = response.Url;
+
+                // Redirect to the URL
+                window.location.href = redirectUrl;
+            },
+            error: function (xhr, status, error) {
+                console.error(xhr, status, error);
+                alert("Có lỗi khi thanh toán, vui lòng thử lại sau.");
+            }
+        });
+    });
+});
+</script>
+
+@*<script>
+        $(function () {
+            $('#PayForm').submit(function (e) {
+                e.preventDefault(); // Ngăn chặn việc gửi form thông qua phương thức POST mặc định
+
+                // Lấy thông tin từ form
+                var fullName = $('input[name="FullName"]').val();
+                var phone = $('input[name="Phone"]').val();
+                var address = $('input[name="Address"]').val();
+                //var city = $('#city').val();
+                //var district = $('#district').val();
+                //var ward = $('#ward').val();
+                var email = '@Email';
+
+                // Tạo đối tượng chứa thông tin cần gửi
+                var data = {
+                    FullName: fullName,
+                    Phone: phone,
+                    Address: address,
+                    Email: email,
+                    //TinhThanh: city,
+                    //QuanHuyen: district,
+                    //PhuongXa: ward
+                };
+                console.log(data);
+                // Gửi dữ liệu bằng AJAX
+                $.ajax({
+                    url: '@Url.Action("ProcessOrder", "YourController")',
+                    type: 'POST',
+                    data: data,
+                    success: function (response) {
+                        // Xử lý kết quả trả về từ action method
+                        if (response.success) {
+                            // Đơn hàng đã được xử lý thành công
+                            alert(response.message);
+                            // Redirect hoặc thực hiện hành động khác ở đây nếu cần
+                        } else {
+                            // Xử lý lỗi nếu có
+                            alert('Đã xảy ra lỗi khi xử lý đơn hàng.');
+                        }
+                    },
+                    error: function () {
+                        // Xử lý lỗi khi thất bại gửi yêu cầu AJAX
+                        alert('Đã xảy ra lỗi khi gửi yêu cầu.');
+                    }
+                });
+            });
+        });
+    </script>*@
+

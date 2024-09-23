@@ -1,0 +1,38 @@
+﻿@model QLBQA.Models.Size
+
+@{
+    ViewBag.Title = "Chi tiết";
+    Layout = "~/Areas/Admin/Views/Shared/_AdminLayout.cshtml";
+}
+
+<div class="card">
+
+    <div class="card-body">
+        <h4 class="card-title">Thông tin chi tiết</h4>
+        <div class="table-responsive">
+            <table class="product-info-table m-t-20">
+                <tbody>
+                    <tr>
+                        <td>ID</td>
+                        <td class="text-dark font-weight-semibold">@Model.SizeID</td>
+                    </tr>
+                    <tr>
+                        <td>Tên kích cỡ</td>
+                        <td>@Model.SizeName</td>
+                    </tr>
+                    <tr>
+                        <td>Mô tả</td>
+                        <td>@Model.Description</td>
+                    </tr>
+
+                </tbody>
+            </table>
+
+        </div>
+    </div>
+
+</div>
+<p>
+    <a class="btn btn-warning m-r-5" href="@Url.Action("Edit", "Sizes", new { id = Model.SizeID})" title="Edit">Sửa</a>
+    <a class="btn btn-info m-r-5" href="@Url.Action("Index", "Sizes")" title="Back">Trở về</a>
+</p>

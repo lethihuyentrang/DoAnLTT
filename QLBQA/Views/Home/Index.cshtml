@@ -1,0 +1,598 @@
+﻿@{
+    ViewBag.Title = "Home Page";
+}
+
+<link rel="stylesheet" href="https://unpkg.com/swiper/swiper-bundle.min.css">
+
+<script src="https://unpkg.com/swiper/swiper-bundle.min.js"></script>
+
+@using QLBQA.Models
+<link rel="stylesheet" href="styles.css">
+@{
+    var Categoies = ViewBag.Category;
+    var Products = ViewBag.Product as List<Product>;
+    var Posts = ViewBag.Post as List<Post>;
+
+}
+<!-- Begin Slider Area -->
+<div class="">
+
+    <!-- Main Slider -->
+    <!-- Main Slider -->
+
+    <div class="slide-container single-product-slider">
+        <div class="slide" onmouseenter="stopSlideshow()" onmouseleave="startSlideshow()">
+            <a href="@Url.Action("Index","Product")">
+                <img src="~/Content/images/acn-freeship_top-banner_desktop-16.04.jpg" alt="Ảnh 1">
+            </a>
+        </div>
+        <div style=" margin-left: -5px;" class="slide" onmouseenter="stopSlideshow()" onmouseleave="startSlideshow()">
+            <a href="@Url.Action("Index","Product")">
+                <img src="~/Content/images/du-lich-he_top-banner_desktop-20.04a.jpg" alt="Ảnh 2">
+            </a>
+        </div>
+        <div style=" margin-left: -4px;" class="slide" onmouseenter="stopSlideshow()" onmouseleave="startSlideshow()">
+            <a href="@Url.Action("Index","Product")">
+                <img src="~/Content/images/sp_moi_top_banner_desktop-23.04.jpg" alt="Ảnh 3">
+            </a>
+        </div>
+
+        <div class="slide-controls">
+            <button onclick="prevSlide()">❮</button>
+            <button onclick="nextSlide()">❯</button>
+        </div>
+    </div>
+
+    @*<div class="slide-container">
+            <div class="slide" onmouseenter="stopSlideshow()" onmouseleave="startSlideshow()">
+                <img src="~/Content/images/acn-freeship_top-banner_desktop-16.04.jpg" alt="Ảnh 1">
+            </div>
+            <div class="slide" onmouseenter="stopSlideshow()" onmouseleave="startSlideshow()">
+                <img src="~/Content/images/du-lich-he_top-banner_desktop-20.04a.jpg" alt="Ảnh 2">
+            </div>
+            <div class="slide" onmouseenter="stopSlideshow()" onmouseleave="startSlideshow()">
+                <img src="~/Content/images/sp_moi_top_banner_desktop-23.04.jpg" alt="Ảnh 3">
+            </div>
+
+            <div class="slide-controls">
+                <button onclick="prevSlide()">❮</button>
+                <button onclick="nextSlide()">❯</button>
+            </div>
+        </div>*@
+
+
+
+</div>
+<!-- Slider Area End Here -->
+<!-- Begin Shipping Area -->
+<div class="shipping-area section-space-top-100">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-4 col-md-6">
+                <div class="shipping-item">
+                    <div class="shipping-img">
+                        <img src="~/assets/User_assets/images/shipping/icon/plane.png" alt="Shipping Icon">
+                    </div>
+                    <div class="shipping-content">
+                        <h5 class="title">Giao hàng hỏa tốc</h5>
+                        <p class="short-desc mb-0">Nhanh chóng và tiện lợi</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-4 col-md-6 pt-6 pt-md-0">
+                <div class="shipping-item">
+                    <div class="shipping-img">
+                        <img src="~/assets/User_assets/images/shipping/icon/earphones.png" alt="Shipping Icon">
+                    </div>
+                    <div class="shipping-content">
+                        <h5 class="title">Hỗ trợ trực tuyến</h5>
+                        <p class="short-desc mb-0">Liên hệ hotline: 090.123.4567</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-4 col-md-6 pt-6 pt-lg-0">
+                <div class="shipping-item">
+                    <div class="shipping-img">
+                        <img src="~/assets/User_assets/images/shipping/icon/shield.png" alt="Shipping Icon">
+                    </div>
+                    <div class="shipping-content">
+                        <h5 class="title">Bảo mật</h5>
+                        <p class="short-desc mb-0">Hệ thống bảo mật thanh toán</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Shipping Area End Here -->
+<!-- Begin Product Area -->
+<div class="product-area section-space-top-100">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-12">
+                <ul class="nav product-tab-nav pb-10" id="myTab" role="tablist">
+                    <li class="nav-item" role="presentation">
+                        <a class="active" id="all-items-tab" data-bs-toggle="tab" href="#all-items" role="tab" aria-controls="all-items" aria-selected="true">
+                            <div class="product-tab-icon">
+                                <img width="60px" src="~/assets/User_assets/images/product/icon/all.png" alt="Product Icon">
+                            </div>
+                            All Items
+                        </a>
+                    </li>
+                    @foreach (var cat in Categoies)
+                    {
+                        <li class="nav-item" role="presentation">
+                            <a id="@("headTab-" + cat.CatID)" data-bs-toggle="tab" href="#tab-@cat.CatID" role="tab" aria-controls="tab-@cat.CatID" aria-selected="false">
+                                <div class="product-tab-icon">
+                                    <img width="60px" src="~/assets/User_assets/images/product/icon/@(cat.CatID).png" alt="Product Icon">
+                                </div>
+                                @cat.CatName
+                            </a>
+                        </li>
+                    }
+
+                </ul>
+                <div class="tab-content" id="myTabContent">
+                    <div class="tab-pane fade show active" id="all-items" role="tabpanel" aria-labelledby="all-items-tab">
+                        <div class="product-item-wrap row">
+                            @foreach (var item in Products.Take(8))
+                            {
+                                <div class="col-xl-3 col-lg-4 col-sm-6">
+                                    <div class="product-item">
+                                        <div class="product-img img-zoom-effect">
+                                            <a href="@Url.Action("Details","Product", new { id = item.ProductID })">
+                                                <img class="img-full" src="~/Content/images/thumb_@item.Thumb" alt="Product Images">
+                                            </a>
+                         
+                                        </div>
+                                        <div class="product-content">
+                                            <a class="product-name clamp-2" href="@Url.Action("Details","Product", new { id = item.ProductID })">@item.ProductName</a>
+                                            <div class="price-box pb-1">
+                                                @if (item.Discount > 0)
+                                                {
+
+                                                <span style="color: black; font-size:medium" class="new-price"><del>@string.Format("{0:#,##0}", item.Price) đ</del> @string.Format("{0:#,##0}", item.Discount) đ</span>
+
+                                                }
+                                                else
+                                                {
+                                            <span style="color: black; font-size:medium" class="new-price">@string.Format("{0:#,##0}", item.Price) đ</span>
+                                                }
+                                            </div>
+
+                                            @*@foreach (var color in Colors)
+                                                {
+                                                    <div class="circle" style=" background-color: @color.ColorCode;"></div>
+
+                                                }*@
+
+
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                            <a style="text-align:center; margin-top:20px" class="product-name" href="@Url.Action("Index","Product")">
+                                Xem thêm >>>
+                            </a>
+
+                        </div>
+                    </div>
+                    <div class="tab-pane fade" id="tab-1" role="tabpanel" aria-labelledby="tab-1">
+                        <div class="product-item-wrap row">
+                            @foreach (var item in Products.Where(p=>p.CatID==1).Take(8))
+                            {
+                                <div class="col-xl-3 col-lg-4 col-sm-6">
+                                    <div class="product-item">
+                                        <div class="product-img img-zoom-effect">
+                                            <a href="@Url.Action("Details","Product", new { id = item.ProductID })">
+                                                <img class="img-full" src="~/Content/images/thumb_@item.Thumb" alt="Product Images">
+                                            </a>
+                                         
+                                        </div>
+                                        <div class="product-content">
+                                            <a class="product-name clamp-2" href="@Url.Action("Details","Product", new { id = item.ProductID })">@item.ProductName</a>
+                                            <div class="price-box pb-1">
+                                                @if (item.Discount > 0)
+                                                {
+
+                                                <span style="color: black; font-size:medium" class="new-price"><del>@string.Format("{0:#,##0}", item.Price) đ</del> @string.Format("{0:#,##0}", item.Discount) đ</span>
+
+                                                }
+                                                else
+                                                {
+                                            <span style="color: black; font-size:medium" class="new-price">@string.Format("{0:#,##0}", item.Price) đ</span>
+                                                }
+                                            </div>
+
+                                            @*@foreach (var color in Colors)
+                            {
+                                <div class="circle" style=" background-color: @color.ColorCode;"></div>
+
+                            }*@
+
+
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                            <a style="text-align:center; margin-top:20px" class="product-name" href="@Url.Action("Index","Product")">
+                                Xem thêm >>>
+                            </a>
+
+                        </div>
+                    </div>
+                    <div class="tab-pane fade" id="tab-2" role="tabpanel" aria-labelledby="tab-2">
+                        <div class="product-item-wrap row">
+                            @foreach (var item in Products.Where(p => p.CatID == 2).Take(8))
+                            {
+                                <div class="col-xl-3 col-lg-4 col-sm-6">
+                                    <div class="product-item">
+                                        <div class="product-img img-zoom-effect">
+                                            <a href="@Url.Action("Details","Product", new { id = item.ProductID })">
+                                                <img class="img-full" src="~/Content/images/thumb_@item.Thumb" alt="Product Images">
+                                            </a>
+                                      
+                                        </div>
+                                        <div class="product-content">
+                                            <a class="product-name clamp-2" href="@Url.Action("Details","Product", new { id = item.ProductID })">@item.ProductName</a>
+                                            <div class="price-box pb-1">
+                                                @if (item.Discount > 0)
+                                                {
+
+                                                <span style="color: black; font-size:medium" class="new-price"><del>@string.Format("{0:#,##0}", item.Price) đ</del> @string.Format("{0:#,##0}", item.Discount) đ</span>
+
+                                                }
+                                                else
+                                                {
+                                                    <span style="color: black; font-size:medium" class="new-price">@string.Format("{0:#,##0}", item.Price) đ</span>
+                                                }
+                                            </div>
+
+                                            @*@foreach (var color in Colors)
+                            {
+                                <div class="circle" style=" background-color: @color.ColorCode;"></div>
+
+                            }*@
+
+
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                            <a style="text-align:center; margin-top:20px" class="product-name" href="@Url.Action("Index","Product")">
+                                Xem thêm >>>
+                            </a>
+
+                        </div>
+                    </div>
+                    <div class="tab-pane fade" id="tab-3" role="tabpanel" aria-labelledby="tab-3">
+                        <div class="product-item-wrap row">
+                            @foreach (var item in Products.Where(p => p.CatID == 3).Take(8))
+                            {
+                                <div class="col-xl-3 col-lg-4 col-sm-6">
+                                    <div class="product-item">
+                                        <div class="product-img img-zoom-effect">
+                                            <a href="@Url.Action("Details","Product", new { id = item.ProductID })">
+                                                <img class="img-full" src="~/Content/images/thumb_@item.Thumb" alt="Product Images">
+                                            </a>
+                          
+                                        </div>
+                                        <div class="product-content">
+                                            <a class="product-name clamp-2" href="@Url.Action("Details","Product", new { id = item.ProductID })">@item.ProductName</a>
+                                            <div class="price-box pb-1">
+                                                @if (item.Discount > 0)
+                                                {
+
+                                                <span style="color: black; font-size:medium" class="new-price"><del>@string.Format("{0:#,##0}", item.Price) đ</del> @string.Format("{0:#,##0}", item.Discount) đ</span>
+
+                                                }
+                                                else
+                                                {
+                                                    <span style="color: black; font-size:medium" class="new-price">@string.Format("{0:#,##0}", item.Price) đ</span>
+                                                }
+                                            </div>
+
+                                            @*@foreach (var color in Colors)
+                            {
+                                <div class="circle" style=" background-color: @color.ColorCode;"></div>
+
+                            }*@
+
+
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                            <a style="text-align:center; margin-top:20px" class="product-name" href="@Url.Action("Index","Product")">
+                                Xem thêm >>>
+                            </a>
+
+                        </div>
+                    </div>
+                    <div class="tab-pane fade" id="tab-4" role="tabpanel" aria-labelledby="tab-4">
+                        <div class="product-item-wrap row">
+                            @foreach (var item in Products.Where(p => p.CatID == 4).Take(8))
+                            {
+                                <div class="col-xl-3 col-lg-4 col-sm-6">
+                                    <div class="product-item">
+                                        <div class="product-img img-zoom-effect">
+                                            <a href="@Url.Action("Details","Product", new { id = item.ProductID })">
+                                                <img class="img-full" src="~/Content/images/thumb_@item.Thumb" alt="Product Images">
+                                            </a>
+                                         
+                                        </div>
+                                        <div class="product-content">
+                                            <a class="product-name clamp-2" href="@Url.Action("Details","Product", new { id = item.ProductID })">@item.ProductName</a>
+                                            <div class="price-box pb-1">
+                                                @if (item.Discount > 0)
+                                                {
+
+                                                    <span style="color: black; font-size:medium" class="new-price"><del>@string.Format("{0:#,##0}", item.Price) đ</del> @string.Format("{0:#,##0}", item.Discount) đ</span>
+
+                                                }
+                                                else
+                                                {
+                                                    <span style="color: black; font-size:medium" class="new-price">@string.Format("{0:#,##0}", item.Price) đ</span>
+                                                }
+                                            </div>
+
+                                            @*@foreach (var color in Colors)
+                            {
+                                <div class="circle" style=" background-color: @color.ColorCode;"></div>
+
+                            }*@
+
+
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                            <a style="text-align:center; margin-top:20px" class="product-name" href="@Url.Action("Index","Product")">
+                                Xem thêm >>>
+                            </a>
+
+                        </div>
+                    </div>   
+                    <div class="tab-pane fade" id="tab-5" role="tabpanel" aria-labelledby="tab-5">
+                        <div class="product-item-wrap row">
+                            @foreach (var item in Products.Where(p => p.CatID == 5).Take(8))
+                            {
+                                <div class="col-xl-3 col-lg-4 col-sm-6">
+                                    <div class="product-item">
+                                        <div class="product-img img-zoom-effect">
+                                            <a href="@Url.Action("Details","Product", new { id = item.ProductID })">
+                                                <img class="img-full" src="~/Content/images/thumb_@item.Thumb" alt="Product Images">
+                                            </a>
+                                     
+                                        </div>
+                                        <div class="product-content">
+                                            <a class="product-name clamp-2" href="@Url.Action("Details","Product", new { id = item.ProductID })">@item.ProductName</a>
+                                            <div class="price-box pb-1">
+                                                @if (item.Discount > 0)
+                                                {
+
+                                                <span style="color: black; font-size:medium" class="new-price"><del>@string.Format("{0:#,##0}", item.Price) đ</del> @string.Format("{0:#,##0}", item.Discount) đ</span>
+
+                                                }
+                                                else
+                                                {
+                                                    <span style="color: black; font-size:medium" class="new-price">@string.Format("{0:#,##0}", item.Price) đ</span>
+                                                }
+                                            </div>
+
+                                            @*@foreach (var color in Colors)
+                            {
+                                <div class="circle" style=" background-color: @color.ColorCode;"></div>
+
+                            }*@
+
+
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                            <a style="text-align:center; margin-top:20px" class="product-name" href="@Url.Action("Index","Product")">
+                                Xem thêm >>>
+                            </a>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Product Area End Here -->
+<!-- Begin Blog Area -->
+<div class="blog-area section-space-y-axis-100">
+    <div class="container">
+        <div class="section-title text-center pb-55">
+            <h2 class="title mb-0">Bài viết mới</h2>
+        </div>
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="swiper-container blog-slider">
+                    <div class="swiper-wrapper">
+                        @foreach (var item in Posts.Take(8))
+                        {
+                            <div class="swiper-slide">
+                                <div class="blog-item">
+                                    <div class="blog-img img-zoom-effect">
+                                        <a href="@Url.Action("Details", "Blog", new { id = item.PostID })">
+                                            <img class="img-full" src="~/Content/images/thumb_post_@item.Thumb" alt="Blog Image">
+                                        </a>
+                                    </div>
+                                    <div class="blog-content">
+                                        <div class="blog-meta text-dim-gray pb-3">
+                                            <ul>
+                                                <li class="date"><i class="fa fa-calendar-o me-2"></i>_@item.CreateDate</li>
+
+                                            </ul>
+                                        </div>
+                                        <h5 class="title mb-4">
+                                            <a title="@item.Title" href="@Url.Action("Details", "Blog", new { id = item.PostID })">
+                                                <span class="clamp-2_1">@item.Title</span>
+                                            </a>
+                                        </h5>
+                                        <div style=" overflow: hidden;" class="title mb-4">
+                                            <p class="short-desc mb-5">@item.SContents</p>
+                                        </div>
+                                        <div class="button-wrap">
+                                            <a class="btn btn-custom-size lg-size btn-dark rounded-0" href="@Url.Action("Details", "Blog", new { id = item.PostID })">Xem thêm</a>
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+
+                        }
+
+                    </div>
+                    <!-- Add Arrows -->
+                    <div class="swiper-button-next"></div>
+                    <div class="swiper-button-prev"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Blog Area End Here -->
+
+<style>
+    .slide-container {
+        position: relative;
+        width: 100%;
+        max-width: 100%; /* Điều chỉnh kích thước slide tùy ý */
+        margin: 0 auto;
+        overflow: hidden;
+        white-space: nowrap; /* Ngăn chặn việc xuống dòng */
+    }
+
+    .slide {
+        display: inline-block; /* Hiển thị slide theo chiều ngang */
+        width: 100%;
+        transition: transform 0.5s ease; /* Thêm hiệu ứng chuyển slide */
+        vertical-align: top; /* Đảm bảo sự căn chỉnh đúng */
+    }
+
+        .slide img {
+            width: 100%;
+            height: auto;
+        }
+
+    .slide-controls {
+        position: absolute;
+        bottom: 10px;
+        left: 50%;
+        transform: translateX(-50%);
+    }
+
+        .slide-controls button {
+            background-color: #f1f1f1;
+            border: none;
+            outline: none;
+            cursor: pointer;
+            padding: 10px 20px;
+            margin: 0 5px;
+        }
+
+    .clamp-2 {
+        display: -webkit-box;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        -webkit-line-clamp: 2; /* Số dòng tối đa */
+        /* Cố định chiều cao của thẻ */
+        height: calc(2 * 1.5em); /* 1.2em là chiều cao của mỗi dòng (có thể điều chỉnh) */
+    }
+
+    .clamp-2_1 {
+        display: -webkit-box;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        -webkit-line-clamp: 2; /* Số dòng tối đa */
+        /* Cố định chiều cao của thẻ */
+        height: calc(2 * 1.36em); /* 1.2em là chiều cao của mỗi dòng (có thể điều chỉnh) */
+    }
+
+    .short-desc {
+        display: -webkit-box;
+        -webkit-line-clamp: 2; /* Số dòng tối đa */
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        -webkit-line-clamp: 2; /* Số dòng tối đa */
+        /* Cố định chiều cao của thẻ */
+        height: calc(2 * 1.8em); /* 1.2em là chiều cao của mỗi dòng (có thể điều chỉnh) */
+    }
+    .blog-content .title {
+        font-size: 18px;
+        line-height: 1.4;
+    }
+    .mb-4 {
+        margin-bottom: 0rem !important;
+    }
+    .btn-custom-size.lg-size {
+        width: 132px;
+        height: 40px;
+        line-height: 40px;
+        font-size: 16px;
+    }
+    del{
+        color: darkred !important;
+    }
+
+</style>
+<script>
+    let slideIndex = 0;
+    let slideInterval;
+
+    // Khởi tạo slideshow khi trang được load
+    showSlide(slideIndex);
+    startSlideshow();
+
+    // Hàm hiển thị slide trước
+    function prevSlide() {
+        showSlide(slideIndex -= 1);
+    }
+
+    // Hàm hiển thị slide tiếp theo
+    function nextSlide() {
+        showSlide(slideIndex += 1);
+    }
+
+    // Hàm hiển thị slide với chỉ số n
+    function showSlide(n) {
+        let slides = document.getElementsByClassName("slide");
+        if (n >= slides.length) { slideIndex = 0; }
+        if (n < 0) { slideIndex = slides.length - 1; }
+        for (let i = 0; i < slides.length; i++) {
+            slides[i].style.transform = "translateX(" + (-100 * slideIndex) + "%)"; /* Dịch chuyển slide */
+        }
+    }
+
+    // Bắt đầu tự động chạy slideshow
+    function startSlideshow() {
+        slideInterval = setInterval(nextSlide, 3000); 
+    }
+    function stopSlideshow() {
+        clearInterval(slideInterval);
+    }
+</script>
+
+<script>
+    var swiper = new Swiper('.swiper-container', {
+        slidesPerView: 4, // Số lượng slide hiển thị trên một lần trượt
+        spaceBetween: 30, // Khoảng cách giữa các slide
+        loop: true, // Lặp lại các slide
+        autoplay: {
+            delay: 3000, // Thời gian chờ giữa các lần trượt (ms)
+            disableOnInteraction: false, // Tự động chạy slide sau khi người dùng tương tác
+        },
+        navigation: {
+            nextEl: '.swiper-button-next', // Nút điều hướng slide tiếp theo
+            prevEl: '.swiper-button-prev', // Nút điều hướng slide trước đó
+        },
+    });
+</script>
